@@ -42,8 +42,8 @@ public class BadAcquisitionPlanner {
 		// get all acquisition windows involved in the problem
 		List<AcquisitionWindow> acquisitionWindows = new ArrayList<AcquisitionWindow>();
 		
-		for(CandidateAcquisition a : pb.candidateAcquisitions){		// FOR in candidate acquisitions
-			for(AcquisitionWindow w : a.acquisitionWindows){		// for nas windows
+		for(CandidateAcquisition a : pb.candidateAcquisitions){		// FOR in list of candidate acquisitions
+			for(AcquisitionWindow w : a.acquisitionWindows){		// FOR in associated ACQ windows
 				acquisitionWindows.add(w);							// Adding every ACQ window
 			}
 		}			
@@ -72,12 +72,12 @@ public class BadAcquisitionPlanner {
 		}
 		writer.write("];");
 		
-		// write the satellite linked with each acquisition window
-				writer.write("\nSatelliteNb = [");
+		// write the satellite index linked with each acquisition window
+				writer.write("\nSatelliteIdx = [");
 				if(!acquisitionWindows.isEmpty()){
-					writer.write(""+acquisitionWindows.get(0).satellite);
+					writer.write(""+acquisitionWindows.get(0).satellite.idx);
 					for(int i=1;i<nAcquisitionWindows;i++){
-						writer.write(","+acquisitionWindows.get(i).satellite);
+						writer.write(","+acquisitionWindows.get(i).satellite.idx);
 					}
 				}
 				writer.write("];");
