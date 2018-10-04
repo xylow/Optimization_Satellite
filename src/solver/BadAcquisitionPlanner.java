@@ -51,6 +51,10 @@ public class BadAcquisitionPlanner {
 		// write the number of acquisition windows
 		int nAcquisitionWindows = acquisitionWindows.size();
 		writer.write("NacquisitionWindows = " + nAcquisitionWindows + ";");
+		
+		// write the number of satellites in the problem
+				int nSatellites = pb.satellites.size();
+				writer.write("Nsatellites = " + nSatellites + ";");
 
 		// write the index of each acquisition
 		writer.write("\nCandidateAcquisitionIdx = [");
