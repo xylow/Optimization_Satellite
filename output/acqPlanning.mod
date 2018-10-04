@@ -1,4 +1,3 @@
-
 /** Number of acquisition opportunities */
 int NacquisitionWindows = ...;
 /** Acquisition range */
@@ -9,6 +8,9 @@ range AcquisitionWindowsPlusZero = 0..NacquisitionWindows;
 int CandidateAcquisitionIdx[AcquisitionWindows] = ...;
 /** Index of the acquisition window in the list of windows associated with the same candidate acquisition */
 int AcquisitionWindowIdx[AcquisitionWindows] = ...;
+/** Index of the satellites linked with each acq window in the list of windows associated with the same candidate acquisition */
+int SatelliteIdx[AcquisitionWindows] = ...;
+
 
 /** Earliest start time associated with each acquisition window */
 float EarliestStartTime[AcquisitionWindows] = ...;
@@ -41,20 +43,24 @@ constraints {
 	
 	// default selection of the dummy acquisition window numbered by 0
 	selectAcq[0] == 1;
+	
+	// Acquisitions that do not share the same satellite cannot be linked
+	forall(a1,a2 in AcquisitionWindows : SatelliteIdx[a1] != SatelliteIdx[a2]) next[a1][a2] == 0;
+	
 	// an acquisition window is selected if and only if it has a (unique) precedessor and a (unique) successor in the plan
 	forall(a1 in AcquisitionWindowsPlusZero){
-		sum(a2 in AcquisitionWindowsPlusZero : a2 != a1) next[a1][a2] == selectAcq[a1];
-		sum(a2 in AcquisitionWindowsPlusZero : a2 != a1) next[a2][a1] == selectAcq[a1];
+		sum(a2 in AcquisitionWindowsPlusZero : a2 != a1 && SatelliteIdx[a1] == SatelliteIdx[a2]) next[a1][a2] == selectAcq[a1];
+		sum(a2 in AcquisitionWindowsPlusZero : a2 != a1 && SatelliteIdx[a1] == SatelliteIdx[a2]) next[a2][a1] == selectAcq[a1];
 		next[a1][a1] == 0;
 	}
 
 	// restriction of possible successive selected acquisition windows by using earliest and latest acquisition times
-	forall(a1,a2 in AcquisitionWindows : a1 != a2 && EarliestStartTime[a1] + Duration[a1] + TransitionTimes[a1][a2] >= LatestStartTime[a2]){
+	forall(a1,a2 in AcquisitionWindows : a1 != a2 && SatelliteIdx[a1] == SatelliteIdx[a2] && EarliestStartTime[a1] + Duration[a1] + TransitionTimes[a1][a2] >= LatestStartTime[a2]){
 		next[a1][a2] == 0;
 	}
 
 	// temporal separation constraints between successive acquisition windows (big-M formulation)
-	forall(a1,a2 in AcquisitionWindows : a1 != a2 && EarliestStartTime[a1] + Duration[a1] + TransitionTimes[a1][a2] < LatestStartTime[a2]){
+	forall(a1,a2 in AcquisitionWindows : a1 != a2 && SatelliteIdx[a1] == SatelliteIdx[a2] && EarliestStartTime[a1] + Duration[a1] + TransitionTimes[a1][a2] < LatestStartTime[a2]){
 		startTime[a1] + Duration[a1] + TransitionTimes[a1][a2]  <= startTime[a2] 
                 + (1-next[a1][a2])*(LatestStartTime[a1]+Duration[a1]+TransitionTimes[a1][a2]-EarliestStartTime[a2]);
 	}
