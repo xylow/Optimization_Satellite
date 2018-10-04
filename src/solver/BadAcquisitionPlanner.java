@@ -34,7 +34,7 @@ public class BadAcquisitionPlanner {
 	 * @param solutionFilename name of the file in which CPLEX solution will be written
 	 * @throws IOException
 	 */
-	public static void writeDatFile(PlanningProblem pb, Satellite satellite, 
+	public static void writeDatFile(PlanningProblem pb, 
 			String datFilename, String solutionFilename) throws IOException{
 		// generate OPL data (only for the satellite selected)
 		PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(datFilename, false)));
@@ -44,9 +44,7 @@ public class BadAcquisitionPlanner {
 		
 		for(CandidateAcquisition a : pb.candidateAcquisitions){		// FOR in candidate acquisitions
 			for(AcquisitionWindow w : a.acquisitionWindows){		// for nas windows
-				if(w.satellite == satellite){
-					acquisitionWindows.add(w);
-				}
+				acquisitionWindows.add(w);							// Adding every ACQ window
 			}
 		}			
 
@@ -73,6 +71,16 @@ public class BadAcquisitionPlanner {
 			}
 		}
 		writer.write("];");
+		
+		// write the satellite linked with each acquisition window
+				writer.write("\nSatelliteNb = [");
+				if(!acquisitionWindows.isEmpty()){
+					writer.write(""+acquisitionWindows.get(0).satellite);
+					for(int i=1;i<nAcquisitionWindows;i++){
+						writer.write(","+acquisitionWindows.get(i).satellite);
+					}
+				}
+				writer.write("];");
 
 		// write the earliest acquisition start time associated with each acquisition window
 		writer.write("\nEarliestStartTime = [");
@@ -130,11 +138,9 @@ public class BadAcquisitionPlanner {
 		ProblemParserXML parser = new ProblemParserXML(); 
 		PlanningProblem pb = parser.read(Params.systemDataFile,Params.planningDataFile);
 		pb.printStatistics();
-		for(Satellite satellite : pb.satellites){
-			String datFilename = "output/acqPlanning_"+satellite.name+".dat";
-			String solutionFilename = "solutionAcqPlan_"+satellite.name+".txt";
-			writeDatFile(pb, satellite, datFilename, solutionFilename);
-		}
+		String datFilename = "output/acqPlanning_.dat";
+		String solutionFilename = "solutionAcqPlan_.txt";
+		writeDatFile(pb, datFilename, solutionFilename);
 	}
 
 }
