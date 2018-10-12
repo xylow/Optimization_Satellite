@@ -52,6 +52,10 @@ public class BadAcquisitionPlanner {
 		int nAcquisitionWindows = acquisitionWindows.size();
 		writer.write("NacquisitionWindows = " + nAcquisitionWindows + ";");
 		
+		// write the total number of candidate acquisitions
+				int nCandidateAcquisitions = pb.candidateAcquisitions.size();
+				writer.write("\nNcandidates = " + nCandidateAcquisitions + ";");
+		
 		// write the number of satellites in the problem
 //				int nSatellites = pb.satellites.size();
 //				writer.write("Nsatellites = " + nSatellites + ";");
