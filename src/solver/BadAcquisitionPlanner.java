@@ -53,8 +53,8 @@ public class BadAcquisitionPlanner {
 		writer.write("NacquisitionWindows = " + nAcquisitionWindows + ";");
 		
 		// write the number of satellites in the problem
-				int nSatellites = pb.satellites.size();
-				writer.write("Nsatellites = " + nSatellites + ";");
+//				int nSatellites = pb.satellites.size();
+//				writer.write("Nsatellites = " + nSatellites + ";");
 
 		// write the index of each acquisition
 		writer.write("\nCandidateAcquisitionIdx = [");
@@ -79,7 +79,9 @@ public class BadAcquisitionPlanner {
 		// write the satellite index linked with each acquisition window
 				writer.write("\nSatelliteIdx = [");
 				if(!acquisitionWindows.isEmpty()){
-					writer.write(""+acquisitionWindows.get(0).satellite.idx);
+					writer.write(""+1);		// Dummy satellite 1
+					writer.write(","+2);		// Dummy satellite 2
+					writer.write(","+acquisitionWindows.get(0).satellite.idx);
 					for(int i=1;i<nAcquisitionWindows;i++){
 						writer.write(","+acquisitionWindows.get(i).satellite.idx);
 					}
