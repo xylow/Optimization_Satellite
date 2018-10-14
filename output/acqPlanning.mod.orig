@@ -11,13 +11,16 @@ int CandidateAcquisitionIdx[AcquisitionWindows] = ...;
 float CostFunc[AcquisitionWindows] = ...;
 /** Index of the acquisition window in the list of windows associated with the same candidate acquisition */
 int AcquisitionWindowIdx[AcquisitionWindows] = ...;
+<<<<<<< HEAD
 /** Index of the satellites linked with each acq window (even the dummy ones) in the list of windows associated with the same candidate acquisition */
 int SatelliteIdx[AcquisitionWindowsExt] = ...;
 
+=======
 /** */
 float CandidateAcquisitionQuota[AcquisitionWindows] = ...;
 /** Candidate acquisition priority */
 int CandidateAcquisitionPri[AcquisitionWindows] = ...;
+>>>>>>> Cost_function_Init
 
 /** Earliest start time associated with each acquisition window */
 float EarliestStartTime[AcquisitionWindows] = ...;
@@ -42,9 +45,15 @@ float TransitionTimes[AcquisitionWindows][AcquisitionWindows] = ...;
 string OutputFile = ...;
 
 /** Boolean variable indicating whether an acquisition window is selected */
+<<<<<<< HEAD
 dvar int selectAcq[AcquisitionWindowsExt] in 0..1;
 /** next[a1][a2] = 1 when a1 is the selected acquisition window that precedes a2 */
 dvar int next[AcquisitionWindowsExt][AcquisitionWindowsExt] in 0..1;
+=======
+dvar int selectAcq[AcquisitionWindowsPlusZero] in 0..1;
+/** next[a1][a2] = 1 = a1 precede a2 / when a1 is the selected acquisition window that follows a2 */
+dvar int next[AcquisitionWindowsPlusZero][AcquisitionWindowsPlusZero] in 0..1;
+>>>>>>> Cost_function_Init
 /** Acquisition start time in each acquisition window */
 dvar float+ startTime[a in AcquisitionWindows] in EarliestStartTime[a]..LatestStartTime[a];
 
@@ -63,14 +72,15 @@ maximize sum(a in AcquisitionWindows) CostFunc[a]*selectAcq[a] - TotalTransTime;
 
 constraints {
 
-	// The same candidate acquisition cannot be repeated (for different acq windows)
-	forall(cand in 1..Ncandidates){ 
-		sum(a1 in AcquisitionWindows : CandidateAcquisitionIdx[a1] == cand) selectAcq[a1] <= 1;	
-	}
 //	// Cost-function definition
 //	forall(a in AcquisitionWindows){	
 //			CostFunc[a] == CandidateAcquisitionQuota[a]*(1 - cloudProba[a])^(1.5)/(1+CandidateAcquisitionPri[a]+(Zenangle[a]/(1.57079)));
 //	}
+	
+	// The same candidate acquisition cannot be repeated (for different acq windows)
+	forall(cand in 1..Ncandidates){ 
+		sum(a1 in AcquisitionWindows : CandidateAcquisitionIdx[a1] == cand) selectAcq[a1] <= 1;	
+	}
 	
 	// default selection of the dummy acquisition windows numbered by 0 and -1 (one for each satellite)
 	selectAcq[-1] 	== 1;

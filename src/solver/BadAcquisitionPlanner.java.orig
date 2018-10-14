@@ -41,10 +41,18 @@ public class BadAcquisitionPlanner {
 
 		// get all acquisition windows involved in the problem
 		List<AcquisitionWindow> acquisitionWindows = new ArrayList<AcquisitionWindow>();
+<<<<<<< HEAD
 		
 		for(CandidateAcquisition a : pb.candidateAcquisitions){		// FOR in list of candidate acquisitions
 			for(AcquisitionWindow w : a.acquisitionWindows){		// FOR in associated ACQ windows
 				acquisitionWindows.add(w);							// Adding every ACQ window
+=======
+		for(CandidateAcquisition a : pb.candidateAcquisitions){
+			for(AcquisitionWindow w : a.acquisitionWindows){
+				if(w.satellite == satellite){
+					acquisitionWindows.add(w);
+				}
+>>>>>>> Cost_function_Init
 			}
 		}			
 

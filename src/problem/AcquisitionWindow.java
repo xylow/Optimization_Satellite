@@ -27,6 +27,8 @@ public class AcquisitionWindow {
 	public final double rollAngle;
 	/** Probability of the presence of clouds if acquisition if performed in this window */
 	public final double cloudProba;
+	/**    */
+	public final double Cost;
 	
 	/**
 	 * Create an acquisition opportunity
@@ -53,6 +55,7 @@ public class AcquisitionWindow {
 		this.rollAngle = rollAngle;
 		this.cloudProba = cloudProba;
 		this.volume = volume;
+		this.Cost = (this.candidateAcquisition.user.quota*Math.pow(1-this.cloudProba, 1.5)*(1-(2*this.zenithAngle/Math.PI)))/(1+this.candidateAcquisition.priority);
 	}
 	
 	@Override
