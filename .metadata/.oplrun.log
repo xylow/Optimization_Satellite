@@ -276,3 +276,27 @@ Command-line arguments:  -clean -nl en_US -configuration /home/promo19/g.galvao-
 
 !ENTRY ilog.odms.ide.opllang.remote 1 0 2018-10-12 15:13:09.465
 !MESSAGE Run Configuration_Acquisition in /home/promo19/g.galvao-adarme/Documents/COS/Optimisation/PROJECT/eclipseprojects/satellitePlanning/output
+!SESSION 2018-10-14 18:13:58.446 -----------------------------------------------
+eclipse.buildId=unknown
+java.fullversion=JRE 1.8.0 IBM J9 2.8 Linux amd64-64 Compressed References 20160719_312156 (JIT enabled, AOT enabled)
+J9VM - R28_Java8_SR3_20160719_1144_B312156
+JIT  - tr.r14.java_20160629_120284.01
+GC   - R28_Java8_SR3_20160719_1144_B312156_CMPRSS
+J9CL - 20160719_312156
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Command-line arguments:  -clean -nl en_US -configuration /home/promo19/g.galvao-adarme/Documents/COS/Optimisation/PROJECT/eclipseprojects/satellitePlanning/.metadata/workspace_oplrun
+
+!ENTRY ilog.odms.ide.opllang.remote 1 0 2018-10-14 18:13:58.447
+!MESSAGE Run Configuration_Acquisition in /home/promo19/g.galvao-adarme/Documents/COS/Optimisation/PROJECT/eclipseprojects/satellitePlanning/output
+!SESSION 2018-10-14 18:22:01.192 -----------------------------------------------
+eclipse.buildId=unknown
+java.fullversion=JRE 1.8.0 IBM J9 2.8 Linux amd64-64 Compressed References 20160719_312156 (JIT enabled, AOT enabled)
+J9VM - R28_Java8_SR3_20160719_1144_B312156
+JIT  - tr.r14.java_20160629_120284.01
+GC   - R28_Java8_SR3_20160719_1144_B312156_CMPRSS
+J9CL - 20160719_312156
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Command-line arguments:  -clean -nl en_US -configuration /home/promo19/g.galvao-adarme/Documents/COS/Optimisation/PROJECT/eclipseprojects/satellitePlanning/.metadata/workspace_oplrun
+
+!ENTRY ilog.odms.ide.opllang.remote 1 0 2018-10-14 18:22:01.192
+!MESSAGE Run Configuration_Acquisition in /home/promo19/g.galvao-adarme/Documents/COS/Optimisation/PROJECT/eclipseprojects/satellitePlanning/output

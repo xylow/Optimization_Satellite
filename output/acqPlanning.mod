@@ -55,11 +55,13 @@ dexpr float acqsum = sum(a in AcquisitionWindows) selectAcq[a];
 dexpr float costsum = sum(a in AcquisitionWindows) CostFunc[a]*selectAcq[a];
 
 execute{
-	cplex.tilim = 600; // 60 seconds
+	cplex.tilim = 60; // 60 seconds
 }
 
 // maximize the number of acquisition windows selected
-maximize sum(a in AcquisitionWindows) CostFunc[a]*selectAcq[a] - TotalTransTime;
+maximize sum(a in AcquisitionWindows) CostFunc[a]*selectAcq[a];
+
+//maximize sum(a1,a2 in AcquisitionWindows) CostFunc[a2]*next[a1][a2]*TransitionTimes[a1][a2];
 
 constraints {
 
