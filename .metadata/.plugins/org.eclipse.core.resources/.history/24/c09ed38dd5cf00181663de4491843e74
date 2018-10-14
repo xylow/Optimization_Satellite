@@ -120,7 +120,6 @@ execute {
 
 	// Writes the .txt file, that follows the matrix structure
 	// (	Candidate ACK idx	|	ACK window idx	|	ACK start time	| 	ACK end time	|	idx of Satellite holding ACK	)
-	// Satellite column will probably not be read by java, but can help user to verify results
 	var ofile = new IloOplOutputFile(OutputFile);
 	for(var i=1; i <= NacquisitionWindows; i++) { 
 		if(selectAcq[i] == 1){

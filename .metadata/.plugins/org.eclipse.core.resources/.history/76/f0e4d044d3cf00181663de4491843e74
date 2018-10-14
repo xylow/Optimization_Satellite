@@ -118,13 +118,11 @@ execute {
 	
 	writeln("costsum: " + costsum + " #acquisitions: " + acqsum + " TransTime: " + TotalTransTime + " s");			
 
-	// Writes the .txt file, that follows the matrix structure
-	// (	Candidate ACK idx	|	ACK window idx	|	ACK start time	| 	ACK end time	|	idx of Satellite holding ACK	)
-	// Satellite column will probably not be read by java, but can help user to verify results
+
 	var ofile = new IloOplOutputFile(OutputFile);
 	for(var i=1; i <= NacquisitionWindows; i++) { 
 		if(selectAcq[i] == 1){
-			ofile.writeln(CandidateAcquisitionIdx[i] + " " + AcquisitionWindowIdx[i] + " " + startTime[i] + " " + (startTime[i]+Duration[i])+ " " + SatelliteIdx[i]);
+			ofile.writeln(CandidateAcquisitionIdx[i] + " " + AcquisitionWindowIdx[i] + " " + startTime[i] + " " + (startTime[i]+Duration[i]));
 		}
 	}
 }
