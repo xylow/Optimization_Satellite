@@ -53,5 +53,10 @@ public abstract class Acquisition {
 	 */
 	public abstract long getVolume();
 	
+	/**
+	 * 
+	 * @return the Idx associated with the acquisition
+	 */
+	public abstract long getIdx();
 	
 }

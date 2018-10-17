@@ -45,5 +45,10 @@ public class RecordedAcquisition extends Acquisition {
 	public long getVolume() {
 		return volume;
 	}
+	
+	@Override
+	public long getIdx() {
+		return idx;
+	}
 
 }

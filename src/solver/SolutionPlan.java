@@ -50,6 +50,7 @@ public class SolutionPlan {
 				a.selectedAcquisitionWindow = a.getAcquisitionWindow(Integer.parseInt(tab[1]));
 				a.selectedAcquisitionStartTime = Double.parseDouble(tab[2]);
 				a.selectedAcquisitionEndTime = Double.parseDouble(tab[3]);
+				//a.selectedAcquisitionEndTime = Double.parseDouble(tab[3]); catch satellite
 				plannedAcquisitions.add(a);				
 			}
 			currentLine = br.readLine();

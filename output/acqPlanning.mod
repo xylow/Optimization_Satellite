@@ -7,8 +7,14 @@ range AcquisitionWindowsPlusZero = 0..NacquisitionWindows;
 
 /** Index of the acquisition in the list of candidate acquisitions of the problem */
 int CandidateAcquisitionIdx[AcquisitionWindows] = ...;
+/** "Cost" of each acquisition */
+float CostFunc[AcquisitionWindows] = ...;
 /** Index of the acquisition window in the list of windows associated with the same candidate acquisition */
 int AcquisitionWindowIdx[AcquisitionWindows] = ...;
+/** */
+float CandidateAcquisitionQuota[AcquisitionWindows] = ...;
+/** Candidate acquisition priority */
+int CandidateAcquisitionPri[AcquisitionWindows] = ...;
 
 /** Earliest start time associated with each acquisition window */
 float EarliestStartTime[AcquisitionWindows] = ...;
@@ -16,28 +22,48 @@ float EarliestStartTime[AcquisitionWindows] = ...;
 float LatestStartTime[AcquisitionWindows] = ...;
 /** Acquisition duration associated with each acquisition window */
 float Duration[AcquisitionWindows] = ...;
-
+/** Acquisition duration associated with each acquisition window */
+float cloudProba[AcquisitionWindows] = ...;
+/** Acquisition duration associated with each acquisition window */
+float Zenangle[AcquisitionWindows] = ...;
+/** Acquisition duration associated with each acquisition window */
+float Rollangle[AcquisitionWindows] = ...;
+/** Required transition time between each pair of successive acquisitions windows */
+int Volume[AcquisitionWindows] = ...;
 /** Required transition time between each pair of successive acquisitions windows */
 float TransitionTimes[AcquisitionWindows][AcquisitionWindows] = ...;
+
+
 
 /** File in which the result will be written */
 string OutputFile = ...;
 
 /** Boolean variable indicating whether an acquisition window is selected */
 dvar int selectAcq[AcquisitionWindowsPlusZero] in 0..1;
-/** next[a1][a2] = 1 when a1 is the selected acquisition window that follows a2 */
+/** next[a1][a2] = 1 = a1 precede a2 / when a1 is the selected acquisition window that follows a2 */
 dvar int next[AcquisitionWindowsPlusZero][AcquisitionWindowsPlusZero] in 0..1;
 /** Acquisition start time in each acquisition window */
 dvar float+ startTime[a in AcquisitionWindows] in EarliestStartTime[a]..LatestStartTime[a];
+
+dexpr float TotalTransTime= sum(a1,a2 in AcquisitionWindows) next[a1][a2]*TransitionTimes[a1][a2];
+
+dexpr float acqsum = sum(a in AcquisitionWindows) selectAcq[a];
+
+dexpr float costsum = sum(a in AcquisitionWindows) CostFunc[a]*selectAcq[a];
 
 execute{
 	cplex.tilim = 60; // 60 seconds
 }
 
 // maximize the number of acquisition windows selected
-maximize sum(a in AcquisitionWindows) selectAcq[a];
+maximize sum(a in AcquisitionWindows) CostFunc[a]*selectAcq[a] - TotalTransTime;
 
 constraints {
+
+//	// Cost-function definition
+//	forall(a in AcquisitionWindows){	
+//			CostFunc[a] == CandidateAcquisitionQuota[a]*(1 - cloudProba[a])^(1.5)/(1+CandidateAcquisitionPri[a]+(Zenangle[a]/(1.57079)));
+//	}
 	
 	// default selection of the dummy acquisition window numbered by 0
 	selectAcq[0] == 1;
@@ -62,6 +88,14 @@ constraints {
 }
 
 execute {
+	for(var i=1; i <= NacquisitionWindows; i++){
+		writeln(CostFunc[i]*selectAcq[i]);
+		
+	}
+	
+	writeln("costsum: " + costsum + " #acquisitions: " + acqsum + " TransTime: " + TotalTransTime + " s");			
+
+
 	var ofile = new IloOplOutputFile(OutputFile);
 	for(var i=1; i <= NacquisitionWindows; i++) { 
 		if(selectAcq[i] == 1){

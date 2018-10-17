@@ -41,9 +41,8 @@ public class BadAcquisitionPlanner {
 
 		// get all acquisition windows involved in the problem
 		List<AcquisitionWindow> acquisitionWindows = new ArrayList<AcquisitionWindow>();
-		
-		for(CandidateAcquisition a : pb.candidateAcquisitions){		// FOR in candidate acquisitions
-			for(AcquisitionWindow w : a.acquisitionWindows){		// for nas windows
+		for(CandidateAcquisition a : pb.candidateAcquisitions){
+			for(AcquisitionWindow w : a.acquisitionWindows){
 				if(w.satellite == satellite){
 					acquisitionWindows.add(w);
 				}
@@ -60,6 +59,36 @@ public class BadAcquisitionPlanner {
 			writer.write(""+acquisitionWindows.get(0).candidateAcquisition.idx);
 			for(int i=1;i<nAcquisitionWindows;i++){
 				writer.write(","+acquisitionWindows.get(i).candidateAcquisition.idx);
+			}
+		}
+		writer.write("];");
+
+//		// write the Idx of the candidate acquisition associated to each acquisition window
+//		writer.write("\nAcqWindCandAcqIdx = [");
+//		if(!acquisitionWindows.isEmpty()){
+//			writer.write(""+acquisitionWindows.get(0).candidateAcquisition.idx);
+//			for(int i=1;i<nAcquisitionWindows;i++){
+//				writer.write(","+acquisitionWindows.get(i).candidateAcquisition.idx);
+//			}
+//		}
+//		writer.write("];");
+		
+		// write the cost of each acquisition
+		writer.write("\nCostFunc = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).Cost);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).Cost);
+			}
+		}
+		writer.write("];");
+		
+		// write the priority of each acquisition
+		writer.write("\nCandidateAcquisitionPri = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).candidateAcquisition.priority);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).candidateAcquisition.priority);
 			}
 		}
 		writer.write("];");
@@ -104,6 +133,56 @@ public class BadAcquisitionPlanner {
 		}
 		writer.write("];");
 
+		// write the cloud probability of acquisitions in each acquisition window
+		writer.write("\ncloudProba = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).cloudProba);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).cloudProba);
+			}
+		}
+		writer.write("];");
+
+		// write the zenith-angle of acquisitions in each acquisition window
+		writer.write("\nZenangle = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).zenithAngle);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).zenithAngle);
+			}
+		}
+		writer.write("];");
+		
+		// write the roll angle of acquisitions in each acquisition window
+		writer.write("\nRollangle = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).rollAngle);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).rollAngle);
+			}
+		}
+		writer.write("];");
+		
+		// write the volume of acquisitions in each acquisition window
+		writer.write("\nVolume = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).volume);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).volume);
+			}
+		}
+		writer.write("];");
+		
+		// write the quota of the user of acquisitions in each acquisition window
+		writer.write("\nCandidateAcquisitionQuota = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).candidateAcquisition.user.quota);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).candidateAcquisition.user.quota);
+			}
+		}
+		writer.write("];");
+		
 		// write the transition times between acquisitions in acquisition windows
 		writer.write("\nTransitionTimes = [");
 		for(int i=0;i<nAcquisitionWindows;i++){
@@ -117,6 +196,22 @@ public class BadAcquisitionPlanner {
 			writer.write("]");
 		}
 		writer.write("\n];");
+
+
+
+		// write the quota of the user
+		//				writer.write("\nQuotas = [");
+		//				for(int i=0;i<nUsers;i++){
+		//					AcquisitionWindow a1 = acquisitionWindows.get(i);
+		//					if(i != 0) writer.write(",");
+		//					writer.write("\n\t[");
+		//					for(int j=0;j<nAcquisitionWindows;j++){
+		//						if(j != 0) writer.write(",");
+		//						writer.write(""+pb.getTransitionTime(a1, acquisitionWindows.get(j)));
+		//					}	
+		//					writer.write("]");
+		//				}
+		//				writer.write("\n];");
 
 		// write the name of the file in which the result will be written
 		writer.write("\nOutputFile = \"" + solutionFilename + "\";");
