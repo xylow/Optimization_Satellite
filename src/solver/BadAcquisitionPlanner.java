@@ -41,9 +41,8 @@ public class BadAcquisitionPlanner {
 
 		// get all acquisition windows involved in the problem
 		List<AcquisitionWindow> acquisitionWindows = new ArrayList<AcquisitionWindow>();
-		
-		for(CandidateAcquisition a : pb.candidateAcquisitions){		// FOR in list of candidate acquisitions
-			for(AcquisitionWindow w : a.acquisitionWindows){		// FOR in associated ACQ windows
+		for(CandidateAcquisition a : pb.candidateAcquisitions){
+			for(AcquisitionWindow w : a.acquisitionWindows){
 				acquisitionWindows.add(w);							// Adding every ACQ window
 			}
 		}			
@@ -215,6 +214,22 @@ public class BadAcquisitionPlanner {
 			writer.write("]");
 		}
 		writer.write("\n];");
+
+
+
+		// write the quota of the user
+		//				writer.write("\nQuotas = [");
+		//				for(int i=0;i<nUsers;i++){
+		//					AcquisitionWindow a1 = acquisitionWindows.get(i);
+		//					if(i != 0) writer.write(",");
+		//					writer.write("\n\t[");
+		//					for(int j=0;j<nAcquisitionWindows;j++){
+		//						if(j != 0) writer.write(",");
+		//						writer.write(""+pb.getTransitionTime(a1, acquisitionWindows.get(j)));
+		//					}	
+		//					writer.write("]");
+		//				}
+		//				writer.write("\n];");
 
 
 

@@ -78,6 +78,11 @@ public class CandidateAcquisition extends Acquisition {
 	}
 	
 	@Override
+	public long getIdx() {
+		return idx;
+	}
+	
+	@Override
 	public String toString(){
 		return name + ": " + acquisitionWindows;
 	}
