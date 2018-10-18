@@ -112,7 +112,7 @@ public class BadAcquisitionPlanner {
 		// write the satellite index linked with each acquisition window
 				writer.write("\nSatelliteIdx = [");
 				if(!acquisitionWindows.isEmpty()){
-					writer.write(""+1);		// Dummy satellite 1
+					writer.write(""+1);			// Dummy satellite 1
 					writer.write(","+2);		// Dummy satellite 2
 					writer.write(","+acquisitionWindows.get(0).satellite.idx);
 					for(int i=1;i<nAcquisitionWindows;i++){
@@ -259,8 +259,8 @@ public class BadAcquisitionPlanner {
 		ProblemParserXML parser = new ProblemParserXML(); 
 		PlanningProblem pb = parser.read(Params.systemDataFile,Params.planningDataFile);
 		pb.printStatistics();
-		String datFilename = "output/acqPlanning_.dat";
-		String solutionFilename = "solutionAcqPlan_.txt";
+		String datFilename = "output/acqPlanning.dat";
+		String solutionFilename = "solutionAcqPlan.txt";
 		writeDatFile(pb, datFilename, solutionFilename);
 	}
 
