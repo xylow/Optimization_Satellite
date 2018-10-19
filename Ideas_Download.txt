@@ -1,0 +1,7 @@
+IDEA FOR DOWNLOAD WINDOW FITTING CONSTRAINT :
+Decision variable treated = StartDownTime(a1)
+
+forall(a1 in StoredAcquisitions, dw in DownloadWindows : EndTime(dw) > EndAckTime(a1)+DonwloadDur(a1) ){
+StartDownTime(a1) > StartTime(dw);
+StartDownTime(a1) < EndTime(dw) - DonwloadDur(a1);
+}
