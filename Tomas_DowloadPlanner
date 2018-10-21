@@ -39,52 +39,58 @@ string OutputFile = ...;
 
 /** Boolean variable indicating whether a download candidate is selected */
 dvar int selectDown[DownloadCandidatesPlusZero] in 0..1;
+/** Boolean matrix indicating the window allocation of download candidates */
+dvar int selectWin[DownloadCandidatesPlusZero][NdownloadWindows] in 0..1;
 /** next[a1][a2] = 1 when a1 is the selected download candidate that precedes a2 */
 dvar int next[DownloadCandidatePlusZero][DownloadCandidatePlusZero] in 0..1;
 /** Acquisition start time in each acquisition window */
 dvar float+ startTime[a in DownloadCandidates] in EarliestStartTime[a]..TotalMissionTime;
 
-dexpr float downsum = sum(c in DownloadCadidates) selectDown[c];
+dexpr float downsum = sum(c in DownloadCandidates) selectDown[c];
 
-dexpr float costsum = sum(c in DownloadCadidates) CostFunc[c]*selectDown[c];
+dexpr float costsum = sum(c in DownloadCandidates) CostFunc[c]*selectDown[c];
 
 execute{
 	cplex.tilim = 60; // 60 seconds
 }
 
 // maximize the value of the download windows selected
-maximize sum(c in DownloadWindows) CostFunc[c]*selectDown[c];
+maximize sum(c in DownloadCandidates) CostFunc[c]*selectDown[c];
 
 constraints {
 
 	// The same candidate cannot be repeated (for different download windows)
-	forall(c in 1..Ncandidates){ 
-		sum(w in NdownloadWindows) selectDown[c][w] <= 1;	
+	forall(c in DownloadCandidates){ 
+		sum(w in DownloadWindows) selectWin[c][w] <= 1;			
+	//	sum(w in DownloadWindows) selectWin[c][w] <= selectDown[c];
 	}
 	
 	// default selection of the dummy download windows numbered by 0 and -1 (one for each satellite)
-	forall(w in 1..NdownloadWindows){
-		selectDown[0][w] == 1;
+	forall(w in DownloadWindows){
+		//selectWin[0][w] == 1;
+		selectDown[0] = 1;
 	}
 	
 	// A download window is selected if and only if it has a (unique) precedessor and a (unique) 
 	// successor in the plan that shares the same satellite
-	forall(c1 in DownloadCandidatesExt){
-		sum(c2 in DownloadCandidatesExt : c2 != c1 ) next[c1][c2] == sum(w in NdownloadWindows) selectDown[c1][w];
-		sum(c2 in DownloadCandidatesExt : c2 != c1 ) next[c2][c1] == sum(w in NdownloadWindows) selectDown[c1][w];
+	forall(c1 in DownloadCandidatesPlusZero){
+		sum(c2 in DownloadCandidatesPlusZero : c2 != c1 ) next[c1][c2] == sum(w in DownloadWindows) selectWin[c1][w];
+		sum(c2 in DownloadCandidatesPlusZero : c2 != c1 ) next[c2][c1] == sum(w in DownloadWindows) selectWin[c1][w];
 		next[c1][c1] == 0;
 	}
 
-	// Window fitting condition
+	// Window fitting condition --> #TODO: Put selectDown in here, for heuristic
 	forall(c in DownloadCandidate, w in DownloadWindows){
-		startTime[c] > (1-selectDown[c][w])*(WindowEndTime[w]-Duration[c]-WindowStartTime[w]) + WindowStartTime[w];
-		startTime[c] < (1-selectDown[c][w])*(WindowStartTime[w]-WindowEndTime[w] + Duration[c]) + WindowEndTime[w] - Duration[c];
+		startTime[c] > (1-selectWin[c][w])*(WindowEndTime[w]-Duration[c]-WindowStartTime[w]) + WindowStartTime[w];
+		startTime[c] < (1-selectWin[c][w])*(WindowStartTime[w]-WindowEndTime[w] + Duration[c]) + WindowEndTime[w] - Duration[c];
 	}
 
-	// Temporal separation constraints between successive download windows (big-M formulation)
+	// Temporal separation constraints between successive download candidates (big-M formulation)
 	forall(c1,c2 in DownloadWindows : c1 != c2 ){
+	//	startTime[c1] + Duration[c1] <= startTime[c2] 
+	//			+ (1-next[c1][c2])*( (TotalMissionTime - Duration[c1]) + Duration[c1] - EarliestStartTime[c2] );
 		startTime[c1] + Duration[c1] <= startTime[c2] 
-				+ (1-next[c1][c2])*( (TotalMissionTime - Duration[c1]) + Duration[c1] - EarliestStartTime[c2] );
+				+ (1-next[c1][c2])*TotalMissionTime;
 	}
 
 //	// Temporal separation constraints between successive acquisition windows (big-M formulation)
