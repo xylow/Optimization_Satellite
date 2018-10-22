@@ -69,10 +69,6 @@ constraints {
 	forall(cand in 1..Ncandidates){ 
 		sum(a1 in AcquisitionWindows : CandidateAcquisitionIdx[a1] == cand) selectAcq[a1] <= 1;	
 	}
-//	// Cost-function definition
-//	forall(a in AcquisitionWindows){	
-//			CostFunc[a] == CandidateAcquisitionQuota[a]*(1 - cloudProba[a])^(1.5)/(1+CandidateAcquisitionPri[a]+(Zenangle[a]/(1.57079)));
-//	}
 	
 	// default selection of the dummy acquisition windows numbered by 0 and -1 (one for each satellite)
 	selectAcq[-1] 	== 1;
@@ -105,15 +101,12 @@ constraints {
 	}
 	
 	// Temporal heuristics for speeding the code up:
-	//
-	
 
 }
 
 execute {
 	for(var i=1; i <= NacquisitionWindows; i++){
 		writeln(CostFunc[i]*selectAcq[i]);
-		
 	}
 	
 	writeln("costsum: " + costsum + " #acquisitions: " + acqsum + " TransTime: " + TotalTransTime + " s");			
