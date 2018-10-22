@@ -107,15 +107,17 @@ execute {
 		writeln(CostFunc[i]*selectDown[i]);
 		
 	}
-	
 	writeln("costsum: " + costsum + " #downloads: " + downsum);			
 	// Writes the .txt file, that follows the matrix structure
 	// (	Candidate Down idx	|	Down start time	| 	Down end time	)
 	// Satellite column will probably not be read by java, but can help user to verify results
 	var ofile = new IloOplOutputFile(OutputFile);
 	for(var i=1; i <= Ncandidates; i++) { 
-		if(selectDown[i] == 1){
-			ofile.writeln(CandidateDownloads[i] + " " + startTime[i] + " " + (startTime[i]+Duration[i]));
+		for(var j =1; j <= NdownloadWindows; j++){
+			if(selectWin[i][j] == 1){
+				ofile.writeln( CandidateDownload[i] + " " + startTime[i] + " " + (startTime[i]+Duration[i]) +
+				 " " + DownloadWindow[i]);
+			}
 		}
-	}
+	}	
 }
