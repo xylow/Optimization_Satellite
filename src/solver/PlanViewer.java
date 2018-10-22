@@ -617,8 +617,7 @@ public class PlanViewer {
 		ProblemParserXML parser = new ProblemParserXML(); 
 		PlanningProblem pb = parser.read(Params.systemDataFile,Params.planningDataFile);
 		SolutionPlan plan = new SolutionPlan(pb);
-		plan.readAcquisitionPlan("output/solutionAcqPlan_SAT1.txt");
-		plan.readAcquisitionPlan("output/solutionAcqPlan_SAT2.txt");
+		plan.readAcquisitionPlan("output/solutionAcqPlan.txt");
 		plan.readDownloadPlan("output/downloadPlan.txt");
 		
 		for(Satellite satellite : pb.satellites){

@@ -1,0 +1,10 @@
+bin/*
+data/*
+lib/*
+.project
+.classpath
+.settings/*
+.metadata/*
+*project
+output/.metadata/*
+
