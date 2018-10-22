@@ -126,11 +126,13 @@ public class GoodDownloadPlanner {
 //					acquisitionWindows.add(w);
 //				}
 //			}
-//		}			
+		//		}			
+		// write the number of acquisition windows
+		writer.write("TotalTime = " + pb.horizonEnd + ";");
 
 		// write the number of acquisition windows
 		int nDownloadWindows = downloadWindows.size();
-		writer.write("NDownloadWindows = " + nDownloadWindows + ";");
+		writer.write("\nNDownloadWindows = " + nDownloadWindows + ";");
 		
 		int nCandidateDownloads = candidateDownloads.size();
 		writer.write("\nNCandidateDownloads = " + nCandidateDownloads + ";");
