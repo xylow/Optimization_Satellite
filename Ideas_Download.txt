@@ -1,0 +1,104 @@
+IDEA FOR DOWNLOAD WINDOW FITTING CONSTRAINT :
+Decision variable treated = StartDownTime(a1)
+
+forall(a1 in StoredAcquisitions, dw in DownloadWindows : EndTime(dw) > EndAckTime(a1)+DonwloadDur(a1) ){
+	StartDownTime(a1) > StartTime(dw);
+	StartDownTime(a1) < EndTime(dw) - DonwloadDur(a1);
+}
+
+# PROBLEM! When I use "for all dw", it means that this constraint is valid for every window! Which is not necessarily true...
+
+NEXT IDEAS :
+
+--> Use a matrix [StoredAcquisitions][DownloadWindows] := {1 if the StoredAck will be downloaded in that window ; 0 if not} 
+
+# PROBLEM = Too many decision variables! And this one has no interest, because downloads don't depend on a specific choice of download window.
+
+MAYBE IT IS A GOOD IDEA?
+
+STATING PROBLEM LOGIC
+
+If (donwload candidate k is assigned to window j) then StartTime[k] > StartTime[j] and StartTime[k] + DownloadDur[k] < EndTime[j].
+Else 	OR StartTime[k] < StartTime[j] 			(I)
+	OR StartTime[k] > EndTime[j]			(II)
+	OR StartTime[k] + DownloadDur[k] > EndTime[j] 	(III)
+	OR StartTime[k] + DownloadDur[k] < StartTime[j]	(IV)
+
+The assignment means the adding of another decision variable, that is, the "StoredAck by Window matrix" (AllocationMatrix). So it might as well be useful.
+In this case, we would have:
+
+forall(a1 in StoredAcquisitions, dw in DownloadWindows){
+	if (AllocationMatrix[a1][dw] == 1) then {
+		StartTime[a1] > StartTime[dw];
+		StartTime[a1] + DownloadDur[a1] < EndTime[dw];
+	}
+}
+
+In BIG-M we should get:
+
+forall(a1 in StoredAcquisitions, dw in DownloadWindows){
+	StartTime[a1] > (1-AllocationMatrix[a1][dw])*(EndTime[dw]-DownloadDur[a1]-StartTime[dw]) + StartTime[dw];
+	StartTime[a1] < (1-AllocationMatrix[a1][dw])*(StartTime[dw]-EndTime[dw] + DownloadDur[a1]) + EndTime[dw] - DownloadDur[a1];
+}
+
+This formulation is the same as:
+
+If (a1 is allocated to dw) then 
+	StartTime[a1] > StartTime[dw]; 
+	StartTime[a1] + DownloadDur[a1] < EndTime[dw];
+
+else 
+	StartTime[a1] + DownloadDur[a1] > EndTime[dw];	(II = Union of II and III)
+	StartTime[a1] < StartTime[dw];			(I = Union of I and IV)
+
+This formulation solves the problem of window fitting. On the other hand, it does not use this constraint to select acquisitions...
+Maybe, the acquisition selection should be only and totally linked with the "next" matrix.
+
+Now, the question is : Could I use only this matrix (without the next matrix) for the download non-intersection constraint? 
+
+-------------------------------------------------------------
+
+IDEAS FOR DOWNLOAD NON-INTERSECTION CONSTRAINT :
+
+Decision variables used = dnext(a1,a2), StartTime(a1)
+
+
+forall(a1,a2 in StoredAcquisitions){
+	StartTime[a2] >= (dnext[a1][a2]-1)*(StartTime[a1] + DownloadDur[a1]) + StartTime[a1] + DownloadDur[a1]
+}
+
+
+-------------------------------------------------------------
+
+"NEXT" VARIABLE SEQUENCING CONSTRAINT (definition of next) :
+
+
+forall(a1 in StoredAcquisitions){
+	sum(a2 in StoredAcquisitionsExt : a2 != a1) dnext[a1][a2] == selectDwl[a1];
+	sum(a2 in StoredAcquisitionsExt : a2 != a1) dnext[a2][a1] == selectDwl[a1];
+	dnext[a1][a1] == 0;
+}
+
+-------------------------------------------------------------
+
+"SELECT" VARIABLE DEFINITION CONSTRAINTS :
+
+- The one up here too /\
+
+selectDwl[0] = 1;
+
+-------------------------------------------------------------
+
+DEFINE ranges and dvars:
+
+StoredAcquisitions = 1..NSelectedAcks;
+StoredAcquisitionsExt = 0..NSelectedAcks;
+
+float+ LastWindowTime = ...; 	//Supremum of window
+dvar int selectDwl[StoredAcquisitionsExt] in 0..1;
+dvar int dnext[StoredAcquisitionsExt][StoredAcquisitionsExt] in 0..1;
+dvar float+ StartTime[a in StoredAcquisitions] in EndAckTime[a]..LastWindowTime;
+// We also need another "StartTime" vector - The one with the window start times. 
+// This other one would not be a dvar, but a data variable. When writing the code --> REDEFINE StartTime variable NAMES!!!
+
+

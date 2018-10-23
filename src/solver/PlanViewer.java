@@ -141,7 +141,7 @@ public class PlanViewer {
 		// create a panel containing the chart
 		chartPanel = new ChartPanel(chart,false);
 	}
-
+	
 	/**
 	 * 
 	 * @param t time in seconds from J2000

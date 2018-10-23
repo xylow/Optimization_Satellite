@@ -34,7 +34,7 @@ public class BadAcquisitionPlanner {
 	 * @param solutionFilename name of the file in which CPLEX solution will be written
 	 * @throws IOException
 	 */
-	public static void writeDatFile(PlanningProblem pb, 
+	public static void writeDatFile(PlanningProblem pb, Satellite satellite, 
 			String datFilename, String solutionFilename) throws IOException{
 		// generate OPL data (only for the satellite selected)
 		PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(datFilename, false)));
@@ -43,21 +43,15 @@ public class BadAcquisitionPlanner {
 		List<AcquisitionWindow> acquisitionWindows = new ArrayList<AcquisitionWindow>();
 		for(CandidateAcquisition a : pb.candidateAcquisitions){
 			for(AcquisitionWindow w : a.acquisitionWindows){
-				acquisitionWindows.add(w);							// Adding every ACQ window
+				if(w.satellite == satellite){
+					acquisitionWindows.add(w);
+				}
 			}
 		}			
 
 		// write the number of acquisition windows
 		int nAcquisitionWindows = acquisitionWindows.size();
 		writer.write("NacquisitionWindows = " + nAcquisitionWindows + ";");
-		
-		// write the total number of candidate acquisitions
-				int nCandidateAcquisitions = pb.candidateAcquisitions.size();
-				writer.write("\nNcandidates = " + nCandidateAcquisitions + ";");
-		
-		// write the number of satellites in the problem
-//				int nSatellites = pb.satellites.size();
-//				writer.write("Nsatellites = " + nSatellites + ";");
 
 		// write the index of each acquisition
 		writer.write("\nCandidateAcquisitionIdx = [");
@@ -108,18 +102,6 @@ public class BadAcquisitionPlanner {
 			}
 		}
 		writer.write("];");
-		
-		// write the satellite index linked with each acquisition window
-				writer.write("\nSatelliteIdx = [");
-				if(!acquisitionWindows.isEmpty()){
-					writer.write(""+1);		// Dummy satellite 1
-					writer.write(","+2);		// Dummy satellite 2
-					writer.write(","+acquisitionWindows.get(0).satellite.idx);
-					for(int i=1;i<nAcquisitionWindows;i++){
-						writer.write(","+acquisitionWindows.get(i).satellite.idx);
-					}
-				}
-				writer.write("];");
 
 		// write the earliest acquisition start time associated with each acquisition window
 		writer.write("\nEarliestStartTime = [");
@@ -231,22 +213,6 @@ public class BadAcquisitionPlanner {
 		//				}
 		//				writer.write("\n];");
 
-
-
-		// write the quota of the user
-		//				writer.write("\nQuotas = [");
-		//				for(int i=0;i<nUsers;i++){
-		//					AcquisitionWindow a1 = acquisitionWindows.get(i);
-		//					if(i != 0) writer.write(",");
-		//					writer.write("\n\t[");
-		//					for(int j=0;j<nAcquisitionWindows;j++){
-		//						if(j != 0) writer.write(",");
-		//						writer.write(""+pb.getTransitionTime(a1, acquisitionWindows.get(j)));
-		//					}	
-		//					writer.write("]");
-		//				}
-		//				writer.write("\n];");
-
 		// write the name of the file in which the result will be written
 		writer.write("\nOutputFile = \"" + solutionFilename + "\";");
 
@@ -259,9 +225,11 @@ public class BadAcquisitionPlanner {
 		ProblemParserXML parser = new ProblemParserXML(); 
 		PlanningProblem pb = parser.read(Params.systemDataFile,Params.planningDataFile);
 		pb.printStatistics();
-		String datFilename = "output/acqPlanning_.dat";
-		String solutionFilename = "solutionAcqPlan_.txt";
-		writeDatFile(pb, datFilename, solutionFilename);
+		for(Satellite satellite : pb.satellites){
+			String datFilename = "output/acqPlanning_"+satellite.name+".dat";
+			String solutionFilename = "solutionAcqPlan_"+satellite.name+".txt";
+			writeDatFile(pb, satellite, datFilename, solutionFilename);
+		}
 	}
 
 }

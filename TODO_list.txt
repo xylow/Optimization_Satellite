@@ -1,0 +1,18 @@
+ACQUISITION:
+
+- OPL development:
+	- Normalized Cost function
+	- Introduction of transition time in the cost function
+	- Heuristics to speed optimization process
+
+
+DOWNLOAD:
+
+- OPL development:
+	- Code cost function
+	- Code constraints for each satellite:
+		- Non-intersection of download periods
+		- Window fitting constraint
+		- Sequencing constraint => end(ACK) < start(DWL)
+
+
