@@ -40,6 +40,7 @@ float TransitionTimes[AcquisitionWindows][AcquisitionWindows] = ...;
 float beta1 = 0.83;
 float beta2 = 0.55;
 
+float TotalTransTime = sum(a1,a2 in AcquisitionWindows) TransitionTimes[a1][a2];
 
 
 /** File in which the result will be written */
@@ -54,12 +55,9 @@ dvar float+ startTime[a in AcquisitionWindows] in EarliestStartTime[a]..LatestSt
 
 dexpr float ConsideredTime = sum(a1,a2 in AcquisitionWindows) next[a1][a2]*TransitionTimes[a1][a2];
 
-dexpr float TotalTransTime = sum(a1,a2 in AcquisitionWindows) TransitionTimes[a1][a2];
-
-
 dexpr float janterieur = sum(a in AcquisitionWindows) (CostFunc[a]*selectAcq[a])/NacquisitionWindows;
 
-
+dexpr int acqsum = sum(w in AcquisitionWindows) selectAcq[w];
 
 dexpr float jnew = beta1*beta1*janterieur - beta2*beta2*ConsideredTime/TotalTransTime;
 
@@ -120,7 +118,7 @@ execute {
 		writeln(CostFunc[i]*selectAcq[i]);
 	}
 	
-	writeln("costsum: " + costsum + " #acquisitions: " + acqsum + " TransTime: " + TotalTransTime + " s");			
+	writeln("costsum: " + jnew + " #acquisitions: " + acqsum + " TransTime: " + TotalTransTime + " s");			
 
 	// Writes the .txt file, that follows the matrix structure
 	// (	Candidate ACK idx	|	ACK window idx	|	ACK start time	| 	ACK end time	|	idx of Satellite holding ACK	)
