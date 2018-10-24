@@ -126,17 +126,18 @@ public class GoodDownloadPlanner {
 //					acquisitionWindows.add(w);
 //				}
 //			}
-		//		}			
+//		}			
+
 		// write the number of acquisition windows
-		writer.write("TotalTime = " + pb.horizonEnd + ";");
+		writer.write("TotalMissionTime = " + pb.horizonEnd + ";");
 
 		// write the number of acquisition windows
 		int nDownloadWindows = downloadWindows.size();
-		writer.write("\nNDownloadWindows = " + nDownloadWindows + ";");
-		
+		writer.write("\nNdownloadWindows = " + nDownloadWindows + ";");
+
 		int nCandidateDownloads = candidateDownloads.size();
-		writer.write("\nNCandidateDownloads = " + nCandidateDownloads + ";");
-		
+		writer.write("\nNcandidates = " + nCandidateDownloads + ";");
+
 		// write the index of each download window
 		writer.write("\nDownloadWindowIdx = [");
 		if(!downloadWindows.isEmpty()){
@@ -156,9 +157,19 @@ public class GoodDownloadPlanner {
 			}
 		}
 		writer.write("];");
-
+		
+		// write the cost of each acquisition
+		writer.write("\nCostFunc = [");
+		if(!candidateDownloads.isEmpty()){
+			writer.write(""+candidateDownloads.get(0).DownloadCost);
+			for(int i=1;i<nCandidateDownloads;i++){
+				writer.write(","+candidateDownloads.get(i).DownloadCost);
+			}
+		}
+		writer.write("];");
+		
 		// write the ending time of the acquisition of each candidate download
-		writer.write("\nAcquisitionTime = [");
+		writer.write("\nEarliestStartTime = [");
 		if(!candidateDownloads.isEmpty()){
 			writer.write(""+candidateDownloads.get(0).getAcquisitionTime());
 			for(int i=1;i<nCandidateDownloads;i++){
@@ -166,19 +177,9 @@ public class GoodDownloadPlanner {
 			}
 		}
 		writer.write("];");
-		
-		// write the DownloadTime of each acquisition
-		writer.write("\nCandidateDownloadTime = [");
-		if(!candidateDownloads.isEmpty()){
-			writer.write(""+candidateDownloads.get(0).getVolume() / Params.downlinkRate);
-			for(int i=1;i<nCandidateDownloads;i++){
-				writer.write(","+candidateDownloads.get(i).getVolume() / Params.downlinkRate);
-			}
-		}
-		writer.write("];");
 
 		// write the start time of each download window
-		writer.write("\nDownloadStartTime = [");
+		writer.write("\nWindowEndTime = [");
 		if(!downloadWindows.isEmpty()){
 			writer.write(""+downloadWindows.get(0).start);
 			for(int i=1;i<nDownloadWindows;i++){
@@ -188,11 +189,21 @@ public class GoodDownloadPlanner {
 		writer.write("];");
 
 		// write the end time of each download window
-		writer.write("\nDownloadEndTime = [");
+		writer.write("\nWindowStartTime = [");
 		if(!downloadWindows.isEmpty()){
 			writer.write(""+downloadWindows.get(0).end);
 			for(int i=1;i<nDownloadWindows;i++){
 				writer.write(","+downloadWindows.get(i).end);
+			}
+		}
+		writer.write("];");
+
+		// write the DownloadTime of each acquisition
+		writer.write("\nDuration = [");
+		if(!candidateDownloads.isEmpty()){
+			writer.write(""+candidateDownloads.get(0).getVolume() / Params.downlinkRate);
+			for(int i=1;i<nCandidateDownloads;i++){
+				writer.write(","+candidateDownloads.get(i).getVolume() / Params.downlinkRate);
 			}
 		}
 		writer.write("];");
@@ -209,7 +220,8 @@ public class GoodDownloadPlanner {
 		ProblemParserXML parser = new ProblemParserXML(); 
 		PlanningProblem pb = parser.read(Params.systemDataFile,Params.planningDataFile);
 		SolutionPlan plan = new SolutionPlan(pb);
-		plan.readAcquisitionPlan("output/solutionAcqPlan.txt");
+		plan.readAcquisitionPlan("output/solutionAcqPlan_SAT1.txt");
+		plan.readAcquisitionPlan("output/solutionAcqPlan_SAT2.txt");
 		pb.printStatistics();
 		for(Satellite satellite : pb.satellites){
 			String datFilename = "output/DLPlanning_"+satellite.name+".dat";

@@ -14,14 +14,15 @@ public abstract class Acquisition {
 	public final User user;
 	/** Priority level associated with acquisition */
 	public final int priority;
-	
+	/** Cost function for the acquisition's download */
+	public final double DownloadCost;
 	/** Download window selected for this acquisition (value null if the acquisition is not downloaded) */
 	public DownloadWindow selectedDownloadWindow;
 	/** Start time of the download (if any) */
 	public double selectedDownloadStartTime;
 	/** End time of the download (if any) */
 	public double selectedDownloadEndTime;
-	 
+	
 	
 	/**
 	 * Create an acquisition
@@ -33,6 +34,7 @@ public abstract class Acquisition {
 		this.name = name;
 		this.priority = priority;
 		this.user = user;
+		this.DownloadCost = 0.5*(1 - priority) + 0.5*user.quota;
 	}
 
 	/**
