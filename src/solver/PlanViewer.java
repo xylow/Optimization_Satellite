@@ -141,7 +141,7 @@ public class PlanViewer {
 		// create a panel containing the chart
 		chartPanel = new ChartPanel(chart,false);
 	}
-	
+
 	/**
 	 * 
 	 * @param t time in seconds from J2000
@@ -617,8 +617,7 @@ public class PlanViewer {
 		ProblemParserXML parser = new ProblemParserXML(); 
 		PlanningProblem pb = parser.read(Params.systemDataFile,Params.planningDataFile);
 		SolutionPlan plan = new SolutionPlan(pb);
-		plan.readAcquisitionPlan("output/solutionAcqPlan_SAT1.txt");
-		plan.readAcquisitionPlan("output/solutionAcqPlan_SAT2.txt");
+		plan.readAcquisitionPlan("output/solutionAcqPlan.txt");
 		plan.readDownloadPlan("output/downloadPlan.txt");
 		
 		for(Satellite satellite : pb.satellites){
