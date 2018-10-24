@@ -36,6 +36,10 @@ int Volume[AcquisitionWindows] = ...;
 /** Required transition time between each pair of successive acquisitions windows */
 float TransitionTimes[AcquisitionWindows][AcquisitionWindows] = ...;
 
+/** Weights for the second level Jnew */
+float beta1 = 0.83;
+float beta2 = 0.55;
+
 
 
 /** File in which the result will be written */
@@ -48,18 +52,25 @@ dvar int next[AcquisitionWindowsExt][AcquisitionWindowsExt] in 0..1;
 /** Acquisition start time in each acquisition window */
 dvar float+ startTime[a in AcquisitionWindows] in EarliestStartTime[a]..LatestStartTime[a];
 
-dexpr float TotalTransTime= sum(a1,a2 in AcquisitionWindows) next[a1][a2]*TransitionTimes[a1][a2];
+dexpr float ConsideredTime = sum(a1,a2 in AcquisitionWindows) next[a1][a2]*TransitionTimes[a1][a2];
 
-dexpr float acqsum = sum(a in AcquisitionWindows) selectAcq[a];
+dexpr float TotalTransTime = sum(a1,a2 in AcquisitionWindows) TransitionTimes[a1][a2];
 
-dexpr float costsum = sum(a in AcquisitionWindows) CostFunc[a]*selectAcq[a];
+
+dexpr float janterieur = sum(a in AcquisitionWindows) (CostFunc[a]*selectAcq[a])/NacquisitionWindows;
+
+
+
+dexpr float jnew = beta1*beta1*janterieur - beta2*beta2*ConsideredTime/TotalTransTime;
+
+
 
 execute{
 	cplex.tilim = 60; // 60 seconds
 }
 
 // maximize the number of acquisition windows selected
-maximize sum(a in AcquisitionWindows) CostFunc[a]*selectAcq[a];
+maximize jnew;
 
 //maximize sum(a1,a2 in AcquisitionWindows) CostFunc[a2]*next[a1][a2]*TransitionTimes[a1][a2];
 
