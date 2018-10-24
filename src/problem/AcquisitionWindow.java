@@ -43,8 +43,9 @@ public class AcquisitionWindow {
 	 * @param cloudProba
 	 * @param volume
 	 */
-	public AcquisitionWindow(int idxInAcquisitionWindows, CandidateAcquisition candidateAcquisition, Satellite satellite,  
+	public AcquisitionWindow(int idxInAcquisitionWindows, CandidateAcquisition candidateAcquisition, Satellite satellite, 
 			double earliestStart, double latestStart, double duration, double zenithAngle, double rollAngle, double cloudProba, long volume) {
+		double alpha1 = 8*0.090535, alpha2 = 7*0.090535, alpha3 = 2*0.090535, alpha4 = 0.090535;
 		this.idx = idxInAcquisitionWindows;
 		this.candidateAcquisition = candidateAcquisition;
 		this.satellite = satellite;
@@ -55,7 +56,8 @@ public class AcquisitionWindow {
 		this.rollAngle = rollAngle;
 		this.cloudProba = cloudProba;
 		this.volume = volume;
-		this.Cost = (this.candidateAcquisition.user.quota*Math.pow(1-this.cloudProba, 1.5)*(1-(2*this.zenithAngle/Math.PI)))/(1+this.candidateAcquisition.priority);
+		double f1 = this.candidateAcquisition.user.quota, f2 = 1-Math.pow(this.cloudProba, 0.01), f3 = this.candidateAcquisition.priority, f4 = Math.pow(1-(2*this.zenithAngle/Math.PI), 0.01);
+		this.Cost = alpha1*alpha1*f1 + alpha2*alpha2*f2 + alpha3*alpha3*f3 + alpha4*alpha4*f4;
 	}
 	
 	@Override

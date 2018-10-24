@@ -165,6 +165,21 @@ public class PlanningProblem {
 	public double getTransitionTime(AcquisitionWindow a1, AcquisitionWindow a2){
 		return Math.abs(a1.rollAngle - a2.rollAngle) / Params.meanRotationSpeed;		
 	}
+	
+	public double getTransitionCost(AcquisitionWindow a1, AcquisitionWindow a2){
+		return a2.Cost/this.getTransitionTime(a1, a2); 	
+	}
+	
+	
+	public double getMaxTransitionTime(){
+		double maxtime = 0;
+		for(int i = 0; i <  candidateAcquisitions.size(); i++ ) {
+			for(int j = 0; j <  candidateAcquisitions.size(); j++ ) {
+				                                                                                                                                                                              
+			}
+		}
+		return maxtime;	
+	}
 
 	@Override
 	public String toString(){
