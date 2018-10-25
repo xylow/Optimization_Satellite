@@ -181,9 +181,9 @@ public class GoodDownloadPlanner {
 		// write the start time of each download window
 		writer.write("\nWindowEndTime = [");
 		if(!downloadWindows.isEmpty()){
-			writer.write(""+downloadWindows.get(0).start);
+			writer.write(""+downloadWindows.get(0).end);
 			for(int i=1;i<nDownloadWindows;i++){
-				writer.write(","+downloadWindows.get(i).start);
+				writer.write(","+downloadWindows.get(i).end);
 			}
 		}
 		writer.write("];");
@@ -191,9 +191,9 @@ public class GoodDownloadPlanner {
 		// write the end time of each download window
 		writer.write("\nWindowStartTime = [");
 		if(!downloadWindows.isEmpty()){
-			writer.write(""+downloadWindows.get(0).end);
+			writer.write(""+downloadWindows.get(0).start);
 			for(int i=1;i<nDownloadWindows;i++){
-				writer.write(","+downloadWindows.get(i).end);
+				writer.write(","+downloadWindows.get(i).start);
 			}
 		}
 		writer.write("];");
@@ -220,8 +220,7 @@ public class GoodDownloadPlanner {
 		ProblemParserXML parser = new ProblemParserXML(); 
 		PlanningProblem pb = parser.read(Params.systemDataFile,Params.planningDataFile);
 		SolutionPlan plan = new SolutionPlan(pb);
-		plan.readAcquisitionPlan("output/solutionAcqPlan_SAT1.txt");
-		plan.readAcquisitionPlan("output/solutionAcqPlan_SAT2.txt");
+		plan.readAcquisitionPlan("output/solutionAcqPlan.txt");
 		pb.printStatistics();
 		for(Satellite satellite : pb.satellites){
 			String datFilename = "output/DLPlanning_"+satellite.name+".dat";

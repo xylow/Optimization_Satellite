@@ -59,14 +59,14 @@ dexpr float TotalTransTime = sum(a1,a2 in AcquisitionWindows) TransitionTimes[a1
 
 dexpr float janterieur = sum(a in AcquisitionWindows) (CostFunc[a]*selectAcq[a])/NacquisitionWindows;
 
-
+dexpr int acqsum = sum(a in AcquisitionWindows) selectAcq[a];
 
 dexpr float jnew = beta1*beta1*janterieur - beta2*beta2*ConsideredTime/TotalTransTime;
 
 
 
 execute{
-	cplex.tilim = 60; // 60 seconds
+	cplex.tilim = 120; // 60 seconds
 }
 
 // maximize the number of acquisition windows selected
@@ -120,7 +120,7 @@ execute {
 		writeln(CostFunc[i]*selectAcq[i]);
 	}
 	
-	writeln("costsum: " + costsum + " #acquisitions: " + acqsum + " TransTime: " + TotalTransTime + " s");			
+	writeln("costsum: " + jnew + " #acquisitions: " + acqsum + " TotalTransTime: " + ConsideredTime + " s");			
 
 	// Writes the .txt file, that follows the matrix structure
 	// (	Candidate ACK idx	|	ACK window idx	|	ACK start time	| 	ACK end time	|	idx of Satellite holding ACK	)
