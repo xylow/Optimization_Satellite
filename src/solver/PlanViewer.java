@@ -9,9 +9,15 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -54,9 +60,12 @@ import problem.DownloadWindow;
 import problem.PlanningProblem;
 import problem.Satellite;
 import problem.ProblemParserXML;
+import problem.RecordedAcquisition;
 import problem.Station;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+//Added by tomas
+import problem.AcquisitionWindow;//Added by tomas
 
 /**
  * Class useful for defining the GanttChart representation of the plan
@@ -613,6 +622,414 @@ public class PlanViewer {
 		}
 	}
 	
+	public static void writeAffichageAcquis(PlanningProblem pb, 
+			String datFilename, String solutionFilename) throws IOException{
+		// generate OPL data (only for the satellite selected)
+		PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(datFilename, false)));
+
+		// get all acquisition windows involved in the problem
+		List<AcquisitionWindow> acquisitionWindows = new ArrayList<AcquisitionWindow>();
+		for(CandidateAcquisition a : pb.candidateAcquisitions){
+			for(AcquisitionWindow w : a.acquisitionWindows){
+				acquisitionWindows.add(w);							// Adding every ACQ window
+			}
+		}			
+
+		// write the number of acquisition windows
+		int nAcquisitionWindows = acquisitionWindows.size();
+		writer.write("NacquisitionWindows = " + nAcquisitionWindows + ";");
+		
+		// write the total number of candidate acquisitions
+				int nCandidateAcquisitions = pb.candidateAcquisitions.size();
+				writer.write("\nNcandidates = " + nCandidateAcquisitions + ";");
+		
+		// write the number of satellites in the problem
+//				int nSatellites = pb.satellites.size();
+//				writer.write("Nsatellites = " + nSatellites + ";");
+
+		// write the index of each acquisition
+		writer.write("\nCandidateAcquisitionIdx = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).candidateAcquisition.idx);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).candidateAcquisition.idx);
+			}
+		}
+		writer.write("];");
+
+//		// write the Idx of the candidate acquisition associated to each acquisition window
+//		writer.write("\nAcqWindCandAcqIdx = [");
+//		if(!acquisitionWindows.isEmpty()){
+//			writer.write(""+acquisitionWindows.get(0).candidateAcquisition.idx);
+//			for(int i=1;i<nAcquisitionWindows;i++){
+//				writer.write(","+acquisitionWindows.get(i).candidateAcquisition.idx);
+//			}
+//		}
+//		writer.write("];");
+		
+		// write the cost of each acquisition
+		writer.write("\nCostFunc = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).Cost);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).Cost);
+			}
+		}
+		writer.write("];");
+		
+		// write the priority of each acquisition
+		writer.write("\nCandidateAcquisitionPri = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).candidateAcquisition.priority);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).candidateAcquisition.priority);
+			}
+		}
+		writer.write("];");
+
+		// write the index of each acquisition window
+		writer.write("\nAcquisitionWindowIdx = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).idx);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).idx);
+			}
+		}
+		writer.write("];");
+		
+		// write the satellite index linked with each acquisition window
+				writer.write("\nSatelliteIdx = [");
+				if(!acquisitionWindows.isEmpty()){
+					writer.write(""+1);			// Dummy satellite 1
+					writer.write(","+2);		// Dummy satellite 2
+					writer.write(","+acquisitionWindows.get(0).satellite.idx);
+					for(int i=1;i<nAcquisitionWindows;i++){
+						writer.write(","+acquisitionWindows.get(i).satellite.idx);
+					}
+				}
+				writer.write("];");
+
+		// write the earliest acquisition start time associated with each acquisition window
+		writer.write("\nEarliestStartTime = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).earliestStart);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).earliestStart);
+			}
+		}
+		writer.write("];");
+
+		// write the latest acquisition start time associated with each acquisition window
+		writer.write("\nLatestStartTime = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).latestStart);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).latestStart);
+			}
+		}
+		writer.write("];");
+
+		// write the duration of acquisitions in each acquisition window
+		writer.write("\nDuration = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).duration);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).duration);
+			}
+		}
+		writer.write("];");
+
+		// write the cloud probability of acquisitions in each acquisition window
+		writer.write("\ncloudProba = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).cloudProba);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).cloudProba);
+			}
+		}
+		writer.write("];");
+
+		// write the zenith-angle of acquisitions in each acquisition window
+		writer.write("\nZenangle = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).zenithAngle);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).zenithAngle);
+			}
+		}
+		writer.write("];");
+		
+		// write the roll angle of acquisitions in each acquisition window
+		writer.write("\nRollangle = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).rollAngle);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).rollAngle);
+			}
+		}
+		writer.write("];");
+		
+		// write the volume of acquisitions in each acquisition window
+		writer.write("\nVolume = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).volume);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).volume);
+			}
+		}
+		writer.write("];");
+		
+		// write the quota of the user of acquisitions in each acquisition window
+		writer.write("\nCandidateAcquisitionQuota = [");
+		if(!acquisitionWindows.isEmpty()){
+			writer.write(""+acquisitionWindows.get(0).candidateAcquisition.user.quota);
+			for(int i=1;i<nAcquisitionWindows;i++){
+				writer.write(","+acquisitionWindows.get(i).candidateAcquisition.user.quota);
+			}
+		}
+		writer.write("];");
+		
+		// write the transition times between acquisitions in acquisition windows
+		writer.write("\nTransitionTimes = [");
+		for(int i=0;i<nAcquisitionWindows;i++){
+			AcquisitionWindow a1 = acquisitionWindows.get(i);
+			if(i != 0) writer.write(",");
+			writer.write("\n\t[");
+			for(int j=0;j<nAcquisitionWindows;j++){
+				if(j != 0) writer.write(",");
+				writer.write(""+pb.getTransitionTime(a1, acquisitionWindows.get(j)));
+			}	
+			writer.write("]");
+		}
+		writer.write("\n];");
+
+
+
+		// write the quota of the user
+		//				writer.write("\nQuotas = [");
+		//				for(int i=0;i<nUsers;i++){
+		//					AcquisitionWindow a1 = acquisitionWindows.get(i);
+		//					if(i != 0) writer.write(",");
+		//					writer.write("\n\t[");
+		//					for(int j=0;j<nAcquisitionWindows;j++){
+		//						if(j != 0) writer.write(",");
+		//						writer.write(""+pb.getTransitionTime(a1, acquisitionWindows.get(j)));
+		//					}	
+		//					writer.write("]");
+		//				}
+		//				writer.write("\n];");
+
+
+
+		// write the quota of the user
+		//				writer.write("\nQuotas = [");
+		//				for(int i=0;i<nUsers;i++){
+		//					AcquisitionWindow a1 = acquisitionWindows.get(i);
+		//					if(i != 0) writer.write(",");
+		//					writer.write("\n\t[");
+		//					for(int j=0;j<nAcquisitionWindows;j++){
+		//						if(j != 0) writer.write(",");
+		//						writer.write(""+pb.getTransitionTime(a1, acquisitionWindows.get(j)));
+		//					}	
+		//					writer.write("]");
+		//				}
+		//				writer.write("\n];");
+
+		// write the name of the file in which the result will be written
+		writer.write("\nOutputFile = \"" + solutionFilename + "\";");
+
+		// close the writer
+		writer.flush();
+		writer.close();		
+	}
+
+	
+	public static void writeAffichageDown(SolutionPlan plan, Satellite satellite,  
+			String datFilename, String solutionFilename) throws IOException{
+		
+		// Preparing data for the .DAT file
+		PlanningProblem pb = plan.pb;
+		List<CandidateAcquisition> acqPlan = plan.plannedAcquisitions;
+
+		
+		boolean firstLine = true;
+
+		// plan downloads for each satellite independently (possible due to the configuration of the constellation)
+			// get all recorded acquisitions associated with this satellite
+			List<Acquisition> candidateDownloads = new ArrayList<Acquisition>();
+			for(RecordedAcquisition dl : pb.recordedAcquisitions){
+				if(dl.satellite == satellite)
+					candidateDownloads.add(dl);
+			}
+			// get all planned acquisitions associated with this satellite
+			for(CandidateAcquisition a : acqPlan){
+				if(a.selectedAcquisitionWindow.satellite == satellite)
+					candidateDownloads.add(a);
+			}
+			// sort acquisitions by increasing start time
+			Collections.sort(candidateDownloads, new Comparator<Acquisition>(){
+				@Override
+				public int compare(Acquisition a0, Acquisition a1) {
+					double start0 = a0.getAcquisitionTime(); 
+					double start1 = a1.getAcquisitionTime();
+					if(start0 < start1)
+						return -1;
+					if(start0 > start1)
+						return 1;
+					return 0;
+				}
+
+			});
+
+			// sort download windows by increasing start time
+			List<DownloadWindow> downloadWindows = new ArrayList<DownloadWindow>();
+			for(DownloadWindow w : pb.downloadWindows){
+				if(w.satellite == satellite)
+					downloadWindows.add(w);
+			}
+			Collections.sort(downloadWindows, new Comparator<DownloadWindow>(){
+				@Override
+				public int compare(DownloadWindow a0, DownloadWindow a1) {
+					double start0 = a0.start; 
+					double start1 = a1.start;
+					if(start0 < start1)
+						return -1;
+					if(start0 > start1)
+						return 1;
+					return 0;
+				}
+			});			
+
+			// chronological traversal of all download windows combined with a chronological traversal of acquisitions which are candidate for being downloaded
+			int currentDownloadWindowIdx = 0;
+			DownloadWindow currentWindow = downloadWindows.get(currentDownloadWindowIdx);
+			double currentTime = currentWindow.start;
+			for(Acquisition a : candidateDownloads){
+				currentTime = Math.max(currentTime, a.getAcquisitionTime());
+				double dlDuration = a.getVolume() / Params.downlinkRate;
+				while(currentTime + dlDuration > currentWindow.end){					
+					currentDownloadWindowIdx++;
+					if(currentDownloadWindowIdx < downloadWindows.size()){
+						currentWindow = downloadWindows.get(currentDownloadWindowIdx);
+						currentTime = Math.max(currentTime, currentWindow.start);
+					}
+					else
+						break;
+				}
+				
+				if(currentDownloadWindowIdx >= downloadWindows.size())
+					break;
+
+				if(firstLine){
+					firstLine = false;
+				}
+				currentTime += dlDuration;
+			}
+		
+
+		// generate OPL data (only for the satellite selected)
+		PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(datFilename, false)));
+
+		// get all download windows involved in the problem
+//		List<DownloadWindow> downloadWindows = new ArrayList<DownloadWindow>();
+//		for(CandidateAcquisition a : pb.candidateAcquisitions){
+//			for(AcquisitionWindow w : a.acquisitionWindows){
+//				if(w.satellite == satellite){
+//					acquisitionWindows.add(w);
+//				}
+//			}
+//		}			
+
+		// write the number of acquisition windows
+		writer.write("TotalMissionTime = " + pb.horizonEnd + ";");
+
+		// write the number of acquisition windows
+		int nDownloadWindows = downloadWindows.size();
+		writer.write("\nNdownloadWindows = " + nDownloadWindows + ";");
+
+		int nCandidateDownloads = candidateDownloads.size();
+		writer.write("\nNcandidates = " + nCandidateDownloads + ";");
+
+		// write the index of each download window
+		writer.write("\nDownloadWindowIdx = [");
+		if(!downloadWindows.isEmpty()){
+			writer.write(""+downloadWindows.get(0).idx);
+			for(int i=1;i<nDownloadWindows;i++){
+				writer.write(","+downloadWindows.get(i).idx);
+			}
+		}
+		writer.write("];");
+
+		// write the index of each candidate download
+		writer.write("\nCandidateDownloadIdx = [");
+		if(!candidateDownloads.isEmpty()){
+			writer.write(""+candidateDownloads.get(0).getIdx());
+			for(int i=1;i<nCandidateDownloads;i++){
+				writer.write(","+candidateDownloads.get(i).getIdx());
+			}
+		}
+		writer.write("];");
+		
+		// write the cost of each acquisition
+		writer.write("\nCostFunc = [");
+		if(!candidateDownloads.isEmpty()){
+			writer.write(""+candidateDownloads.get(0).DownloadCost);
+			for(int i=1;i<nCandidateDownloads;i++){
+				writer.write(","+candidateDownloads.get(i).DownloadCost);
+			}
+		}
+		writer.write("];");
+		
+		// write the ending time of the acquisition of each candidate download
+		writer.write("\nEarliestStartTime = [");
+		if(!candidateDownloads.isEmpty()){
+			writer.write(""+candidateDownloads.get(0).getAcquisitionTime());
+			for(int i=1;i<nCandidateDownloads;i++){
+				writer.write(","+candidateDownloads.get(i).getAcquisitionTime());
+			}
+		}
+		writer.write("];");
+
+		// write the start time of each download window
+		writer.write("\nWindowEndTime = [");
+		if(!downloadWindows.isEmpty()){
+			writer.write(""+downloadWindows.get(0).start);
+			for(int i=1;i<nDownloadWindows;i++){
+				writer.write(","+downloadWindows.get(i).start);
+			}
+		}
+		writer.write("];");
+
+		// write the end time of each download window
+		writer.write("\nWindowStartTime = [");
+		if(!downloadWindows.isEmpty()){
+			writer.write(""+downloadWindows.get(0).end);
+			for(int i=1;i<nDownloadWindows;i++){
+				writer.write(","+downloadWindows.get(i).end);
+			}
+		}
+		writer.write("];");
+
+		// write the DownloadTime of each acquisition
+		writer.write("\nDuration = [");
+		if(!candidateDownloads.isEmpty()){
+			writer.write(""+candidateDownloads.get(0).getVolume() / Params.downlinkRate);
+			for(int i=1;i<nCandidateDownloads;i++){
+				writer.write(","+candidateDownloads.get(i).getVolume() / Params.downlinkRate);
+			}
+		}
+		writer.write("];");
+
+		// write the name of the file in which the result will be written
+		writer.write("\nOutputFile = \"" + solutionFilename + "\";");
+
+		// close the writer
+		writer.flush();
+		writer.close();		
+	}
+	
+	
+	
 	public static void main(String[] args) throws XMLStreamException, FactoryConfigurationError, IOException, ParseException{
 		
 		ProblemParserXML parser = new ProblemParserXML(); 
@@ -654,6 +1071,17 @@ public class PlanViewer {
 		for(Satellite satellite : pb.satellites){
 			PlanViewer planView = new PlanViewer(plan,satellite);
 			planView.show();
+		}
+		//Acquisition Affichage 
+		String OPLAcquisOutput = "output/acqPlanning.dat";
+		String AcquisMATLABInput = "solutionAcqPlan.txt";
+		writeAffichageAcquis(pb, OPLAcquisOutput, AcquisMATLABInput);
+		
+		//Download Affichage
+		for(Satellite satellite : pb.satellites){
+			String OPLDownOutput = "output/DLPlanning_"+satellite.name+".dat";
+			String DownMATLABInput = "solutionDLPlan_"+satellite.name+".txt";
+			writeAffichageDown(plan, satellite, OPLDownOutput, DownMATLABInput);
 		}
 	}
 
