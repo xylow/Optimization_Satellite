@@ -2,6 +2,7 @@
 float TotalMissionTime = ...;
 int NdownloadWindows = ...;
 int Ncandidates = ...;
+int NRECcandidates = ...;
 /** Download range */
 range DownloadWindows = 1..NdownloadWindows;
 //range DownloadWindowsPlusZero = 0..NdownloadWindows;
@@ -120,10 +121,10 @@ execute {
 	for(var i=1; i <= Ncandidates; i++) { 
 		for(var j =1; j <= NdownloadWindows; j++){
 			if(selectWin[i][j] == 1){
-//				ofile.writeln( CandidateDownload[i] + " " + startTime[i] + " " + (startTime[i]+Duration[i]) +
-//				 " " + DownloadWindow[i]);
-				 ofile.writeln(   " " + startTime[i] + " " + (Duration[i]) +
-				 " " );
+				if(i >= 1 && i <= NRECcandidates)
+					ofile.writeln("REC " + CandidateDownloadIdx[i] + " " + DownloadWindowIdx[j] + " " +startTime[i] + " " + (startTime[i]+Duration[i]) );
+				else
+					ofile.writeln("CAND " + CandidateDownloadIdx[i] + " " + DownloadWindowIdx[j] + " " +startTime[i] + " " + (startTime[i]+Duration[i]) );
 			}
 		}
 	}	

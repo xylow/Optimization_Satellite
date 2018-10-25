@@ -43,11 +43,15 @@ public class GoodDownloadPlanner {
 		boolean firstLine = true;
 
 		// plan downloads for each satellite independently (possible due to the configuration of the constellation)
+			int NumberofRecorded = 0;
 			// get all recorded acquisitions associated with this satellite
 			List<Acquisition> candidateDownloads = new ArrayList<Acquisition>();
 			for(RecordedAcquisition dl : pb.recordedAcquisitions){
-				if(dl.satellite == satellite)
+				if(dl.satellite == satellite) {
 					candidateDownloads.add(dl);
+					NumberofRecorded = NumberofRecorded + 1;
+				}
+					
 			}
 			// get all planned acquisitions associated with this satellite
 			for(CandidateAcquisition a : acqPlan){
@@ -137,6 +141,9 @@ public class GoodDownloadPlanner {
 
 		int nCandidateDownloads = candidateDownloads.size();
 		writer.write("\nNcandidates = " + nCandidateDownloads + ";");
+		
+		// Writes the number of total recorded candidates
+		writer.write("\nNRECcandidates = " + NumberofRecorded + ";");
 
 		// write the index of each download window
 		writer.write("\nDownloadWindowIdx = [");
@@ -181,9 +188,9 @@ public class GoodDownloadPlanner {
 		// write the start time of each download window
 		writer.write("\nWindowEndTime = [");
 		if(!downloadWindows.isEmpty()){
-			writer.write(""+downloadWindows.get(0).start);
+			writer.write(""+downloadWindows.get(0).end);
 			for(int i=1;i<nDownloadWindows;i++){
-				writer.write(","+downloadWindows.get(i).start);
+				writer.write(","+downloadWindows.get(i).end);
 			}
 		}
 		writer.write("];");
@@ -191,9 +198,9 @@ public class GoodDownloadPlanner {
 		// write the end time of each download window
 		writer.write("\nWindowStartTime = [");
 		if(!downloadWindows.isEmpty()){
-			writer.write(""+downloadWindows.get(0).end);
+			writer.write(""+downloadWindows.get(0).start);
 			for(int i=1;i<nDownloadWindows;i++){
-				writer.write(","+downloadWindows.get(i).end);
+				writer.write(","+downloadWindows.get(i).start);
 			}
 		}
 		writer.write("];");
