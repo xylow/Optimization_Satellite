@@ -2,7 +2,7 @@
 clear all;
 clc;
 %close all;
-fid = fopen('MatlabDownload.txt', 'r');
+fid = fopen('Matlab_Download_bad.txt', 'r');
 
 tline = fgetl(fid);
 %tline = replace(tline, ' ', '');
@@ -24,12 +24,12 @@ fclose(fid);
 disp(Downloadvar(1,:)); % display quota
 disp(Downloadvar(2,:)); % display priority
 
-UserName = cell(1,NUsers)
+UserName = cell(1,NUsers);
 %UserName = {};
 UserId = zeros(1,NUsers);
 for i = 1:NUsers
-    UserId(i) = i; 
-    UserName(1,i) = {strcat('User ',num2str(i))};
+    UserId(i) = i-1; 
+    UserName(1,i) = {strcat('User ',num2str(i-1))};
 end
 
 Users = categorical(Downloadvar(1,:),UserId,UserName);
@@ -68,11 +68,11 @@ disp(Acquisitionvar(4,:)); % display user
 
 %%
 
-x = randn(2000,1);
-y = 1 + randn(5000,1);
-h1 = histogram(x);
-hold on
-h2 = histogram(y);
+% x = randn(2000,1);
+% y = 1 + randn(5000,1);
+% h1 = histogram(x);
+% hold on
+% h2 = histogram(y);
 
 
 % figure
