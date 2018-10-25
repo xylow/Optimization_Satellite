@@ -37,8 +37,11 @@ int Volume[AcquisitionWindows] = ...;
 float TransitionTimes[AcquisitionWindows][AcquisitionWindows] = ...;
 
 /** Weights for the second level Jnew */
-float beta1 = 0.83;
-float beta2 = 0.55;
+//float beta1 = 0.83;
+//float beta2 = 0.55;
+float beta1 = 1.0;
+float beta2 = 0;
+
 
 float TotalTransTime = sum(a1,a2 in AcquisitionWindows) TransitionTimes[a1][a2];
 
