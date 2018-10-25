@@ -131,8 +131,8 @@ public class BadDownloadPlanner_2_Sats {
 		ProblemParserXML parser = new ProblemParserXML(); 
 		PlanningProblem pb = parser.read(Params.systemDataFile,Params.planningDataFile);
 		SolutionPlan plan = new SolutionPlan(pb);
-		plan.readAcquisitionPlan("output/solutionAcqPlan.txt");
-		planDownloads(plan,"output/downloadPlan.txt");		
+		plan.readAcquisitionPlan("output/GoodSolutionAcqPlan.txt");
+		planDownloads(plan,"output/downloadPlan_mixed.txt");		
 	}
 	
 }

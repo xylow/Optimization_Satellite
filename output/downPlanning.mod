@@ -123,8 +123,8 @@ execute {
 			if(selectWin[i][j] == 1){
 				if(i >= 1 && i <= NRECcandidates)
 					ofile.writeln("REC " + CandidateDownloadIdx[i] + " " + DownloadWindowIdx[j] + " " +startTime[i] + " " + (startTime[i]+Duration[i]) );
-				else
-					ofile.writeln("CAND " + CandidateDownloadIdx[i] + " " + DownloadWindowIdx[j] + " " +startTime[i] + " " + (startTime[i]+Duration[i]) );
+				else if(i >=1)
+					ofile.writeln("CAND " + CandidateDownloadIdx[i] + " " + DownloadWindowIdx[j] + " " +startTime[i] + " " + (startTime[i]+Duration[i]) );	
 			}
 		}
 	}	

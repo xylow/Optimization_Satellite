@@ -639,16 +639,16 @@ public class PlanViewer {
 				plan.readDownloadPlan("output/downloadPlan.txt");
 				break;
 			case "mixed":
-				plan.readAcquisitionPlan("output/solutionAcqPlan.txt");
-				plan.readDownloadPlan("output/downloadPlan.txt");
+				plan.readAcquisitionPlan("output/GoodSolutionAcqPlan.txt");
+				plan.readDownloadPlan("output/downloadPlan_mixed.txt");
 				break;
 			case "good":
-				plan.readAcquisitionPlan("output/solutionAcqPlan.txt");
+				plan.readAcquisitionPlan("output/GoodSolutionAcqPlan.txt");
 				plan.readDownloadPlan("output/solutionDLPlan_SAT1.txt");
 				plan.readDownloadPlan("output/solutionDLPlan_SAT2.txt");
 				break;
 			default:
-				System.out.println("ERROR! Choose a valid plan selection: 'bad', 'mixed' or 'good'.");
+				System.out.println("ERROR! Please choose a valid plan selection: 'bad', 'mixed' or 'good'.");
 		}
 		
 		for(Satellite satellite : pb.satellites){

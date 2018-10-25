@@ -227,7 +227,7 @@ public class GoodDownloadPlanner {
 		ProblemParserXML parser = new ProblemParserXML(); 
 		PlanningProblem pb = parser.read(Params.systemDataFile,Params.planningDataFile);
 		SolutionPlan plan = new SolutionPlan(pb);
-		plan.readAcquisitionPlan("output/solutionAcqPlan.txt");
+		plan.readAcquisitionPlan("output/GoodSolutionAcqPlan.txt");
 		pb.printStatistics();
 		for(Satellite satellite : pb.satellites){
 			String datFilename = "output/DLPlanning_"+satellite.name+".dat";
