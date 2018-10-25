@@ -43,11 +43,15 @@ public class GoodDownloadPlanner {
 		boolean firstLine = true;
 
 		// plan downloads for each satellite independently (possible due to the configuration of the constellation)
+			int NumberofRecorded = 0;
 			// get all recorded acquisitions associated with this satellite
 			List<Acquisition> candidateDownloads = new ArrayList<Acquisition>();
 			for(RecordedAcquisition dl : pb.recordedAcquisitions){
-				if(dl.satellite == satellite)
+				if(dl.satellite == satellite){
 					candidateDownloads.add(dl);
+					NumberofRecorded = NumberofRecorded+1;
+				}
+					
 			}
 			// get all planned acquisitions associated with this satellite
 			for(CandidateAcquisition a : acqPlan){
@@ -138,6 +142,8 @@ public class GoodDownloadPlanner {
 		int nCandidateDownloads = candidateDownloads.size();
 		writer.write("\nNcandidates = " + nCandidateDownloads + ";");
 
+		writer.write("\nNRECcandidates = " + NumberofRecorded + ";");
+		
 		// write the index of each download window
 		writer.write("\nDownloadWindowIdx = [");
 		if(!downloadWindows.isEmpty()){
