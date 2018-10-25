@@ -29,7 +29,7 @@ import problem.Satellite;
  * @author cpralet
  *
  */
-public class BadDownloadPlanner {
+public class BadDownloadPlanner_2_Sats {
 
 	
 	public static void planDownloads(SolutionPlan plan, String solutionFilename) throws IOException{
@@ -131,8 +131,7 @@ public class BadDownloadPlanner {
 		ProblemParserXML parser = new ProblemParserXML(); 
 		PlanningProblem pb = parser.read(Params.systemDataFile,Params.planningDataFile);
 		SolutionPlan plan = new SolutionPlan(pb);
-		plan.readAcquisitionPlan("output/solutionAcqPlan_SAT1.txt");
-		plan.readAcquisitionPlan("output/solutionAcqPlan_SAT2.txt");
+		plan.readAcquisitionPlan("output/solutionAcqPlan.txt");
 		planDownloads(plan,"output/downloadPlan.txt");		
 	}
 	

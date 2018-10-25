@@ -55,7 +55,8 @@ import problem.PlanningProblem;
 import problem.Satellite;
 import problem.ProblemParserXML;
 import problem.Station;
-
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 /**
  * Class useful for defining the GanttChart representation of the plan
@@ -617,8 +618,38 @@ public class PlanViewer {
 		ProblemParserXML parser = new ProblemParserXML(); 
 		PlanningProblem pb = parser.read(Params.systemDataFile,Params.planningDataFile);
 		SolutionPlan plan = new SolutionPlan(pb);
-		plan.readAcquisitionPlan("output/solutionAcqPlan.txt");
-		plan.readDownloadPlan("output/downloadPlan.txt");
+		/*
+		SELECTION OF MISSION PLAN - POSSIBILITIES:
+		1) "bad" 	: Original solution - bad acquisition and download planners - OPL
+		2) "mixed" 	: Upgraded acquisition + original download planner
+		3) "good" 	: Both upgraded acquisition and download
+		*/
+		System.out.println("Choose plan type for viewing solutions.");
+		System.out.println("There are 3 possibilities: 'bad', 'mixed' or 'good'.\nPlease write: ");
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String plan_select = br.readLine();
+		
+		//String plan_select = "bad";
+		
+		// Depending on the selected plan to view, loads different data files
+		switch(plan_select){
+			case "bad":	
+				plan.readAcquisitionPlan("output/solutionAcqPlan_SAT1.txt");
+				plan.readAcquisitionPlan("output/solutionAcqPlan_SAT2.txt");
+				plan.readDownloadPlan("output/downloadPlan.txt");
+				break;
+			case "mixed":
+				plan.readAcquisitionPlan("output/solutionAcqPlan.txt");
+				plan.readDownloadPlan("output/downloadPlan.txt");
+				break;
+			case "good":
+				plan.readAcquisitionPlan("output/solutionAcqPlan.txt");
+				plan.readDownloadPlan("output/solutionDLPlan_SAT1.txt");
+				plan.readDownloadPlan("output/solutionDLPlan_SAT2.txt");
+				break;
+			default:
+				System.out.println("ERROR! Choose a valid plan selection: 'bad', 'mixed' or 'good'.");
+		}
 		
 		for(Satellite satellite : pb.satellites){
 			PlanViewer planView = new PlanViewer(plan,satellite);
