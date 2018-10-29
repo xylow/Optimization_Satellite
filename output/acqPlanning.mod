@@ -31,7 +31,7 @@ dvar int next[AcquisitionWindowsPlusZero][AcquisitionWindowsPlusZero] in 0..1;
 dvar float+ startTime[a in AcquisitionWindows] in EarliestStartTime[a]..LatestStartTime[a];
 
 execute{
-	cplex.tilim = 300; // 60 seconds
+	cplex.tilim = 60*20; // 60 seconds
 }
 
 // maximize the number of acquisition windows selected

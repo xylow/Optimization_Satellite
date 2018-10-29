@@ -67,7 +67,7 @@ dexpr float jnew = beta1*beta1*janterieur - beta2*beta2*ConsideredTime/TotalTran
 
 
 execute{
-	cplex.tilim = 300; // 60 seconds
+	cplex.tilim = 60*20; // 60 seconds
 }
 
 // maximize the number of acquisition windows selected

@@ -52,7 +52,7 @@ dexpr float costsum = sum(c in DownloadCandidates, w in DownloadWindows) CostFun
 //dexpr int selectDown[c in DownloadCandidatesPlusZero] = sum(w in DownloadWindowsPlusZero) selectWin[c][w];
 
 execute{
-	cplex.tilim = 300; // 60 seconds
+	cplex.tilim = 60*20; // 60 seconds
 }
 
 // maximize the value of the download windows selected
