@@ -624,44 +624,43 @@ public class PlanViewer {
 		}
 	}
 	
+	// Function to write the MATLAB input datafile for acquisitions
 	public static void writeMatlabDatafile_Acquisition(PlanningProblem pb, 
 			String txtFilename) throws IOException{
-		// Generate txt file for Matlab
+		// generate txt file for Matlab
 		PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(txtFilename, false)));
-
-		// get all selected acquisition windows involved in the problem
 		List<AcquisitionWindow> selectedWindows = new ArrayList<AcquisitionWindow>();
 		
-		// Gets all the candidates' selected acquisition windows
+		// gets all the candidate selected acquisition windows
 		for(CandidateAcquisition a : pb.candidateAcquisitions){
 			if(a.selectedAcquisitionWindow != null) {
 				selectedWindows.add(a.selectedAcquisitionWindow);
 			}
 		}
 
-		// First line variables
-		int nCandidates = pb.candidateAcquisitions.size();
-		int nChosen = selectedWindows.size();
-		double PlanTime = pb.horizonEnd - pb.horizonStart;
-		double TotAcqTime = 0;
+		// first line variables
+		int nCandidates = pb.candidateAcquisitions.size();	// Total number of candidate acquisitions
+		int nChosen = selectedWindows.size();			// Number of selected candidate acquisitions
+		double PlanTime = pb.horizonEnd - pb.horizonStart;	// Total time span of the optimization horizon problem
+		double TotAcqTime = 0;					// Initialization of total acquisition time
 		for(AcquisitionWindow w : selectedWindows ) {
-			TotAcqTime += w.duration;
+			TotAcqTime += w.duration;			// adds selected windows' durations to total ack time
 		}
-		// Write first line
+		// write first line
 		writer.write(nChosen + " " + nCandidates + " " +  TotAcqTime + " " +  PlanTime + " " + pb.users.size() + "\n");
 		
-		// Write second line (quota)
+		// write second line (user quota)
 		for(User u : pb.users) {
 			writer.write(u.quota + " ");
 		}
 		
-		// Write matrix for selected windows
+		// write data matrix for selected acquisition windows
 		for(AcquisitionWindow w : selectedWindows ) {
-			double CloudProb = w.cloudProba;
-			double AngZen = w.zenithAngle;
-			int Prior = w.candidateAcquisition.priority;
-			int Useridx = w.candidateAcquisition.user.idx;
-			writer.write("\n" + CloudProb + " " + AngZen + " " +  Prior + " " +  Useridx);
+			double CloudProb = w.cloudProba;		// Selected window cloud probability 
+			double AngZen = w.zenithAngle;			// Selected window zenith angle
+			int Prior = w.candidateAcquisition.priority;	// Selected window priority
+			int Useridx = w.candidateAcquisition.user.idx;	// Selected window user index
+			writer.write("\n" + CloudProb + " " + AngZen + " " +  Prior + " " +  Useridx);	// write line
 		}
 		
 		// close the writer
@@ -670,34 +669,29 @@ public class PlanViewer {
 	}
 
 	
+	// Function to write the MATLAB input datafile for downloads
 	public static void writeMatlabDatafile_Download(PlanningProblem pb, SolutionPlan plan,
 			String txtFilename) throws IOException{
-		// Generate txt file for Matlab
+		// generate txt file for Matlab
 		PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(txtFilename, false)));
 
-		// get all selected acquisition windows involved in the problem
-		List<AcquisitionWindow> selectedWindows = new ArrayList<AcquisitionWindow>();
+		// first line variables definition
+		int nDwlCandidates = plan.plannedAcquisitions.size()+pb.recordedAcquisitions.size();	// Number of total download candidates
+		int nDwlChosen = plan.plannedDownload.size();						// Number of selected download candidates
 		
-		// Gets all the candidates' selected acquisition windows
-		
-
-		// First line variables
-		int nDwlCandidates = plan.plannedAcquisitions.size();
-		int nDwlChosen = plan.plannedDownload.size();
-		
-		// Write first line
+		// write first line
 		writer.write(nDwlChosen + " " + nDwlCandidates + " " + pb.users.size() + "\n");
 		
-		// Write second line (quota)
+		// write second line (user quota)
 		for(User u : pb.users) {
 			writer.write(u.quota + " ");
 		}
 		
-		// Write matrix for selected windows
+		// write data matrix for selected downloaded acquisitions
 		for(Acquisition w : plan.plannedDownload ) {
-			int Useridx = w.user.idx;
-			int Prior = w.priority;
-			writer.write("\n" + Useridx + " " + Prior);
+			int Useridx = w.user.idx;			// Planned download user index
+			int Prior = w.priority;				// Planned download priority
+			writer.write("\n" + Useridx + " " + Prior);	// write line
 		}
 		
 		// close the writer
@@ -717,6 +711,8 @@ public class PlanViewer {
 		1) "bad" 	: Original solution - bad acquisition and download planners - OPL
 		2) "mixed" 	: Upgraded acquisition + original download planner
 		3) "good" 	: Both upgraded acquisition and download
+		
+		NOTE : One can change manually the directory for the input and output txt files
 		*/
 		System.out.println("Choose plan type for viewing solutions.");
 		System.out.println("There are 3 possibilities: 'bad', 'mixed' or 'good'.\nPlease write: ");
@@ -725,7 +721,7 @@ public class PlanViewer {
 		String matlab_ack_filename = "Matlab_Acquisition.txt";
 		String matlab_dwl_filename = "Matlab_Download.txt";
 		
-		// Depending on the selected plan to view, loads different data files
+		// Depending on the selected plan to view, loads different data files, and changes output datafile names
 		switch(plan_select){
 			case "bad":	
 				plan.readAcquisitionPlan("output/solutionAcqPlan_SAT1.txt");
@@ -751,16 +747,17 @@ public class PlanViewer {
 				System.out.println("ERROR! Please choose a valid plan selection: 'bad', 'mixed' or 'good'.");
 		}
 		
+		// Shows the temporal plan 
 		for(Satellite satellite : pb.satellites){
 			PlanViewer planView = new PlanViewer(plan,satellite);
 			planView.show();
 		}
 		
-		//Acquisition write matlab file
+		// Acquisition write matlab file
 		String Ack_matlab_out_path = "output/" + matlab_ack_filename;
 		writeMatlabDatafile_Acquisition(pb, Ack_matlab_out_path);
 		
-		//Acquisition write matlab file
+		// Acquisition write matlab file
 		String Dwl_matlab_out_path = "output/" + matlab_dwl_filename;
 		writeMatlabDatafile_Download(pb, plan, Dwl_matlab_out_path);
 	}
