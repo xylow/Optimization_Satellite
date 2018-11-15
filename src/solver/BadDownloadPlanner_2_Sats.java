@@ -131,8 +131,8 @@ public class BadDownloadPlanner_2_Sats {
 		ProblemParserXML parser = new ProblemParserXML(); 
 		PlanningProblem pb = parser.read(Params.systemDataFile,Params.planningDataFile);
 		SolutionPlan plan = new SolutionPlan(pb);
-		plan.readAcquisitionPlan("output/GoodSolutionAcqPlan.txt");
-		planDownloads(plan,"output/downloadPlan_mixed.txt");		
+		plan.readAcquisitionPlan("output/GoodSolutionAcqPlan.txt");	// read acquisition plan for both satellites
+		planDownloads(plan,"output/downloadPlan_mixed.txt");		// outputs "mixed" download plan
 	}
 	
 }
