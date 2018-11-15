@@ -1,7 +1,7 @@
-/** Number of acquisition opportunities */
+/** Number of... */
 int NacquisitionWindows = ...;
 int Ncandidates = ...;
-/** Acquisition range */
+/** Acquisition problem range */
 range AcquisitionWindows = 1..NacquisitionWindows;
 range AcquisitionWindowsExt = -1..NacquisitionWindows;
 
@@ -14,7 +14,7 @@ int AcquisitionWindowIdx[AcquisitionWindows] = ...;
 /** Index of the satellites linked with each acq window (even the dummy ones) in the list of windows associated with the same candidate acquisition */
 int SatelliteIdx[AcquisitionWindowsExt] = ...;
 
-/** */
+/** Candidate aquisition user quota */
 float CandidateAcquisitionQuota[AcquisitionWindows] = ...;
 /** Candidate acquisition priority */
 int CandidateAcquisitionPri[AcquisitionWindows] = ...;
@@ -23,32 +23,30 @@ int CandidateAcquisitionPri[AcquisitionWindows] = ...;
 float EarliestStartTime[AcquisitionWindows] = ...;
 /** Latest start time associated with each acquisition window */
 float LatestStartTime[AcquisitionWindows] = ...;
-/** Acquisition duration associated with each acquisition window */
+/** Acquisition duration */
 float Duration[AcquisitionWindows] = ...;
-/** Acquisition duration associated with each acquisition window */
+/** Acquisition Cloud Probability */
 float cloudProba[AcquisitionWindows] = ...;
-/** Acquisition duration associated with each acquisition window */
+/** Acquisition Zenith angle */
 float Zenangle[AcquisitionWindows] = ...;
-/** Acquisition duration associated with each acquisition window */
+/** Acquisition roll angle */
 float Rollangle[AcquisitionWindows] = ...;
-/** Required transition time between each pair of successive acquisitions windows */
+/** Aquisition data volume */
 int Volume[AcquisitionWindows] = ...;
 /** Required transition time between each pair of successive acquisitions windows */
 float TransitionTimes[AcquisitionWindows][AcquisitionWindows] = ...;
 
 /** Weights for the second level Jnew */
-//float beta1 = 0.83;
-//float beta2 = 0.55;
 float beta1 = 1.0;
 float beta2 = 0;
 
-
+/** Calculation of total transition time */
 float TotalTransTime = sum(a1,a2 in AcquisitionWindows) TransitionTimes[a1][a2];
-
 
 /** File in which the result will be written */
 string OutputFile = ...;
 
+//DECISION VARIABLES
 /** Boolean variable indicating whether an acquisition window is selected */
 dvar int selectAcq[AcquisitionWindowsExt] in 0..1;
 /** next[a1][a2] = 1 when a1 is the selected acquisition window that precedes a2 */
@@ -56,12 +54,16 @@ dvar int next[AcquisitionWindowsExt][AcquisitionWindowsExt] in 0..1;
 /** Acquisition start time in each acquisition window */
 dvar float+ startTime[a in AcquisitionWindows] in EarliestStartTime[a]..LatestStartTime[a];
 
+//Expression for currently considered time 
 dexpr float ConsideredTime = sum(a1,a2 in AcquisitionWindows) next[a1][a2]*TransitionTimes[a1][a2];
 
+//Expression for cost function imported from Java 
 dexpr float janterieur = sum(a in AcquisitionWindows) (CostFunc[a]*selectAcq[a])/NacquisitionWindows;
 
+//Expression for sum of selected acquisitions
 dexpr int acqsum = sum(w in AcquisitionWindows) selectAcq[w];
 
+//Expression for sum of new cost function in which transition time is considered
 dexpr float jnew = beta1*beta1*janterieur - beta2*beta2*ConsideredTime/TotalTransTime;
 
 
@@ -73,10 +75,7 @@ execute{
 // maximize the number of acquisition windows selected
 maximize jnew;
 
-//maximize sum(a1,a2 in AcquisitionWindows) CostFunc[a2]*next[a1][a2]*TransitionTimes[a1][a2];
-
 constraints {
-
 	// The same candidate acquisition cannot be repeated (for different acq windows)
 	forall(cand in 1..Ncandidates){ 
 		sum(a1 in AcquisitionWindows : CandidateAcquisitionIdx[a1] == cand) selectAcq[a1] <= 1;	
@@ -111,18 +110,14 @@ constraints {
 		startTime[a1] + Duration[a1] + TransitionTimes[a1][a2]  <= startTime[a2] 
                 + (1-next[a1][a2])*(LatestStartTime[a1]+Duration[a1]+TransitionTimes[a1][a2]-EarliestStartTime[a2]);
 	}
-	
-	// Temporal heuristics for speeding the code up:
-
 }
 
 execute {
 	for(var i=1; i <= NacquisitionWindows; i++){
 		writeln(CostFunc[i]*selectAcq[i]);
 	}
-	
 	writeln("costsum: " + jnew + " #acquisitions: " + acqsum + " TransTime: " + TotalTransTime + " s");			
-
+	
 	// Writes the .txt file, that follows the matrix structure
 	// (	Candidate ACK idx	|	ACK window idx	|	ACK start time	| 	ACK end time	|	idx of Satellite holding ACK	)
 	// Satellite column will probably not be read by java, but can help user to verify results
